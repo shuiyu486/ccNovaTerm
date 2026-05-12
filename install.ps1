@@ -32,6 +32,15 @@ $ErrorActionPreference = 'Continue'
 # ============================================================
 # Resolve script/config location
 # ============================================================
+# Redirect macOS users to install.sh
+if ($IsMacOS -or (-not (Get-Command powershell.exe -EA SilentlyContinue) -and (Get-Command sw_vers -EA SilentlyContinue))) {
+    Write-Host "  ccNovaTerm" -ForegroundColor Cyan
+    Write-Host "  macOS detected — please use the macOS installer:" -ForegroundColor Yellow
+    Write-Host "    ./install.sh"
+    Write-Host "  If you have PowerShell Core installed, you may also use install.ps1 on macOS."
+    exit 0
+}
+
 $ScriptPath = try { $MyInvocation.MyCommand.Path } catch { "" }
 if (-not $ScriptPath) {
     $ScriptPath = Join-Path $env:USERPROFILE "install.ps1"
@@ -80,7 +89,7 @@ if ($DryRun) {
 if (-not (Test-Path (Join-Path $ConfigDir ".wezterm.lua"))) {
     Write-Fail ("Config directory not found: " + $ConfigDir)
     Write-Info "Make sure you run this script from the cloned repo directory:"
-    Write-Info "  git clone https://github.com/<user>/ccNovaTerm.git"
+    Write-Info "  git clone https://github.com/shuiyu486/ccNovaTerm.git"
     Write-Info "  cd ccNovaTerm"
     Write-Info "  .\install.ps1"
     exit 1
