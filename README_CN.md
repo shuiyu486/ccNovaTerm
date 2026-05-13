@@ -96,8 +96,9 @@ cd ccNovaTerm
 | `Alt+D` | 右侧分屏 | | `Alt+Shift+D` | 下方分屏 |
 | `Alt+←↑↓→` | 切换分屏 | | `Alt+X` | 关闭分屏 |
 | `Alt+H` | 隐藏窗口 | | `右键` | 复制/粘贴 |
+| `Shift+Enter` | 换行 (Claude Code) | | | |
 
-Nushell：键入 `y` 启动 Yazi，退出自动 cd。
+Nushell：键入 `y` 启动 Yazi，退出自动 cd。`cc` 是 `claude` 的快捷别名。
 
 <details>
 <summary><b>自定义 WezTerm / Starship / Statusline / 代理</b></summary>
@@ -122,8 +123,8 @@ Nushell：键入 `y` 启动 Yazi，退出自动 cd。
   ~/.claude/statusline.ps1 + settings.json           （双平台）
 
 运行时:
-  ccNovaTerm-statusline-cache                        （临时目录）
-  ccNovaTerm-backup/                                 （用户目录）
+  ccNovaTerm-statusline-cache/ses-{PID}.txt             （临时目录，按窗口隔离）
+  ccNovaTerm-backup/                                      （用户目录）
 ```
 
 ## 已知问题
@@ -134,6 +135,9 @@ Nushell：键入 `y` 启动 Yazi，退出自动 cd。
 | Token 统计虚高 | 已内置去重，无需处理 |
 | 字体装不上 | 关闭 WezTerm 再装 |
 | 光标变白块 | ink/DECSCUSR，暂无解 |
+| Statusline 中文乱码 | 已修复（原始字节 + UTF-8 解码） |
+| 切换项目后 ses 为负 | 已修复（transcript path + apiTotal 检查） |
+| 多窗口 ses 冲突 | 已修复（按 PID 隔离缓存文件） |
 
 ## License
 

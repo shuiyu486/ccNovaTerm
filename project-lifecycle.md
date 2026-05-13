@@ -1,4 +1,4 @@
-# ccNovaTerm — Project CLAUDE.md
+# ccNovaTerm — Project project-lifecycle.md
 
 ## 项目定位
 
@@ -78,7 +78,7 @@ WezTerm 配置通过 `wezterm.target_triple` 检测 OS，Windows 使用完整 nu
 
 ### 状态栏缓存文件
 
-`%TEMP%\ccNovaTerm-statusline-cache`（Windows）/ `$TMPDIR/ccNovaTerm-statusline-cache`（macOS）。9 行格式：
+`%TEMP%\ccNovaTerm-statusline-cache\ses-{PID}.txt`（Windows）/ `$TMPDIR/ccNovaTerm-statusline-cache/ses-{PID}.txt`（macOS）。每个 claude.exe PID 使用独立缓存文件，避免多窗口写同一文件冲突。9 行格式：
 ```
 <apiAll>|<lineCount>|<transcriptPath>|<sesPid>|<apiSesBase>|<lastIn>|<lastOut>|<lastCC>|<lastCR>
 ```
@@ -177,6 +177,7 @@ hero.png 需要展示完整终端环境（Starship 提示符 + claude 运行 + s
 ## 维护备忘
 
 - 状态栏缓存格式变更（如 5→7→9 行）时，`$cl.Count -ge N` 校验会清掉旧缓存自动重建
+- 缓存文件按 PID 隔离（`ses-{PID}.txt`），切换项目或新开窗口不会互相干扰
 - `settings.json` 合并依赖 `Add-Member -Force`（Win）或 `python3`（Mac），修改合并逻辑需两边同步
 - WezTerm 的 `window_decorations = 'RESIZE'` 是刻意为之——`INTEGRATED_BUTTONS` 会导致中文 IME 失效
 - 鼠标绑定用 `Up` 事件而非 `Down`——避免拖拽选区异常

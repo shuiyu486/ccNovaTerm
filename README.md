@@ -96,8 +96,9 @@ cd ccNovaTerm
 | `Alt+D` | Split right | | `Alt+Shift+D` | Split down |
 | `Alt+Arrows` | Switch pane | | `Alt+X` | Close pane |
 | `Alt+H` | Hide window | | `Right-click` | Smart copy/paste |
+| `Shift+Enter` | Newline (Claude Code) | | | |
 
-Nushell: type `y` to launch Yazi, exit to auto-cd.
+Nushell: type `y` to launch Yazi, exit to auto-cd. `cc` is aliased to `claude` for quick access.
 
 <details>
 <summary><b>Customization — WezTerm / Starship / Statusline / Proxy</b></summary>
@@ -122,7 +123,7 @@ After install:
   ~/.claude/statusline.ps1 + settings.json              (Both)
 
 Runtime:
-  ccNovaTerm-statusline-cache                           (Temp dir)
+  ccNovaTerm-statusline-cache/ses-{PID}.txt             (Temp dir, per-window)
   ccNovaTerm-backup/                                    (Home dir)
 ```
 
@@ -134,6 +135,9 @@ Runtime:
 | Token count inflated | Built-in dedup — no action needed |
 | Font fails to install | Close WezTerm before installing |
 | Cursor turns white block | ink/DECSCUSR issue, no fix yet |
+| Statusline garbled with Chinese | Fixed (raw bytes + UTF-8 decode) |
+| ses negative after switching project | Fixed (transcript path + apiTotal check) |
+| Multi-window ses conflict | Fixed (per-PID cache isolation) |
 
 ## License
 

@@ -31,6 +31,7 @@ config.keys = {
   { key = 'DownArrow', mods = 'ALT', action = wezterm.action.ActivatePaneDirection 'Down' },
   { key = 'x', mods = 'ALT', action = wezterm.action.CloseCurrentPane { confirm = true } },
   { key = 'h', mods = 'ALT', action = wezterm.action.Hide },
+  { key = 'Enter', mods = 'SHIFT', action = wezterm.action.SendString '\x1b[13;2u' },
 }
 
 config.hyperlink_rules = wezterm.default_hyperlink_rules()

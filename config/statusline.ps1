@@ -1,23 +1,41 @@
-$ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# --- Read JSON from stdin ---
+# --- Read JSON from stdin as raw bytes, decode with UTF-8 ---
 $inputJson = ""
+$rawBytes = $null
 try {
     $stream = [Console]::OpenStandardInput()
-    $reader = New-Object System.IO.StreamReader($stream, [System.Text.Encoding]::UTF8)
-    $inputJson = $reader.ReadToEnd()
-} catch { try { $inputJson = [Console]::In.ReadToEnd() } catch {} }
+    $ms = New-Object System.IO.MemoryStream
+    $stream.CopyTo($ms)
+    $rawBytes = $ms.ToArray()
+    $ms.Close()
+} catch {}
+
+if ($rawBytes -and $rawBytes.Length -gt 0) {
+    $inputJson = [System.Text.Encoding]::UTF8.GetString($rawBytes)
+}
+
 if (-not $inputJson) { try { $inputJson = $input | Out-String } catch {} }
 if (-not $inputJson.Trim()) { exit }
-try { $data = $inputJson | ConvertFrom-Json } catch { exit }
 
-$model = if ($data.model.display_name) { $data.model.display_name } else { "unknown" }
-$ctxPct = if ($data.context_window.used_percentage) { [math]::Floor($data.context_window.used_percentage) } else { 0 }
-$effort = if ($data.effort.level) { $data.effort.level } else { "" }
-$ctxSize = if ($data.context_window.context_window_size) { $data.context_window.context_window_size } else { 0 }
-$inputTokens = if ($data.context_window.total_input_tokens) { $data.context_window.total_input_tokens } else { 0 }
-$outputTokens = if ($data.context_window.total_output_tokens) { $data.context_window.total_output_tokens } else { 0 }
+# --- Parse JSON using .NET JavaScriptSerializer (bypasses PS5.1 ConvertFrom-Json encoding bugs) ---
+Add-Type -AssemblyName System.Web.Extensions -EA SilentlyContinue
+$data = $null
+try {
+    $ser = New-Object System.Web.Script.Serialization.JavaScriptSerializer
+    $ser.MaxJsonLength = [int]::MaxValue
+    $data = $ser.DeserializeObject($inputJson)
+} catch {}
+
+if (-not $data) { exit }
+
+# --- Extract values from Dictionary<string,object> ---
+$model = if ($data['model'] -and $data['model']['display_name']) { $data['model']['display_name'] } else { "unknown" }
+$ctxPct = if ($data['context_window'] -and $data['context_window']['used_percentage']) { [math]::Floor([double]$data['context_window']['used_percentage']) } else { 0 }
+$effort = if ($data['effort'] -and $data['effort']['level']) { $data['effort']['level'] } else { "" }
+$ctxSize = if ($data['context_window'] -and $data['context_window']['context_window_size']) { [long]$data['context_window']['context_window_size'] } else { 0 }
+$inputTokens = if ($data['context_window'] -and $data['context_window']['total_input_tokens']) { [long]$data['context_window']['total_input_tokens'] } else { 0 }
+$outputTokens = if ($data['context_window'] -and $data['context_window']['total_output_tokens']) { [long]$data['context_window']['total_output_tokens'] } else { 0 }
 
 # --- Find claude.exe PID for session tracking ---
 $sessionPid = 0
@@ -31,13 +49,12 @@ try {
     }
 } catch {}
 
-# --- Load session cache ---
-# Cache format (9 lines):
-#   apiAll|lineCount|transcriptPath|sesPid|apiSesBase|lastIn|lastOut|lastCC|lastCR
-# lastIn/Out/CC/CR track the last counted entry's usage for cross-boundary dedup
+# --- Per-PID session cache ---
 $sesApi = 0; $apiTotal = 0
-$transcriptPath = if ($data.transcript_path) { $data.transcript_path } else { "" }
-$sessionFile = Join-Path $env:TEMP "ccNovaTerm-statusline-cache"
+$transcriptPath = if ($data['transcript_path']) { $data['transcript_path'] } else { "" }
+$cacheDir = Join-Path $env:TEMP "ccNovaTerm-statusline-cache"
+try { if (-not (Test-Path $cacheDir)) { New-Item -ItemType Directory -Force $cacheDir | Out-Null } } catch {}
+$sessionFile = if ($sessionPid -ne 0) { Join-Path $cacheDir "ses-$sessionPid.txt" } else { Join-Path $cacheDir "ses-default.txt" }
 
 $cApiAll = 0; $cAllLines = 0; $cAllPath = ""
 $cSesPid = 0; $cApiSesBase = 0
@@ -54,8 +71,6 @@ if (Test-Path $sessionFile) {
 }
 
 # --- Inline token counting ---
-# Dedup: consecutive entries with identical usage (In,Out,CC,CR) are from the
-# same API call (thinking + text + tool_call blocks). Skip duplicates.
 $pAsst = '"type":"assistant"'
 $pMsg = '"role":"assistant"'
 $pIn = '"input_tokens":(\d+)'
@@ -104,13 +119,15 @@ if ($transcriptPath -and (Test-Path $transcriptPath)) {
         if ($needFullRead) { $apiTotal = $newApi }
         else { $apiTotal = $cApiAll + $newApi }
 
-        if ($sessionPid -ne 0 -and $cSesPid -eq $sessionPid -and $cApiSesBase -gt 0) {
+        if ($sessionPid -ne 0 -and $cSesPid -eq $sessionPid -and $cAllPath -eq $transcriptPath -and $cApiSesBase -gt 0 -and $apiTotal -ge $cApiSesBase) {
             $sesApi = $apiTotal - $cApiSesBase
         } else { $cApiSesBase = $apiTotal; $sesApi = 0 }
 
         Set-Content $sessionFile "$apiTotal`n$lineCount`n$transcriptPath`n$sessionPid`n$cApiSesBase`n$prevIn`n$prevOut`n$prevCC`n$prevCR" -Force -EA SilentlyContinue
     } catch { $apiTotal = $inputTokens + $outputTokens; $sesApi = $inputTokens + $outputTokens }
 } else { $apiTotal = $inputTokens + $outputTokens; $sesApi = $inputTokens + $outputTokens }
+
+if ($sesApi -lt 0) { $sesApi = 0 }
 
 # --- Format and display ---
 function fmtW($t) { $w = $t / 10000; if ($w -ge 100) { "{0:F0}w" -f $w } elseif ($w -ge 10) { "{0:F1}w" -f $w } elseif ($w -ge 1) { "{0:F2}w" -f $w } else { "$t" } }
