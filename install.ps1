@@ -70,6 +70,13 @@ function Write-Fail([string]$msg) {
 function Write-Info([string]$msg) {
     Write-Host ("    .. " + $msg) -ForegroundColor Gray
 }
+function Write-FileUtf8NoBom([string]$Path, [string]$Content) {
+    # .NET UTF8 does NOT write BOM, unlike PS5.1 Set-Content -Encoding UTF8
+    # BOM breaks Nushell alias parsing and corrupts Nerd Font PUA chars
+    $dir = Split-Path -Parent $Path
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force $dir | Out-Null }
+    [System.IO.File]::WriteAllText($Path, $Content, [System.Text.Encoding]::UTF8)
+}
 
 # ============================================================
 # Banner
@@ -362,7 +369,7 @@ foreach ($t in $targets) {
             $dstDir = Split-Path -Parent $t.Dst
             try {
                 New-Item -ItemType Directory -Force $dstDir | Out-Null
-                Set-Content $t.Dst $content -Encoding UTF8 -Force
+                Write-FileUtf8NoBom $t.Dst $content
                 Write-OK ($t.Title + " -> " + $t.Dst)
                 $installedCount++
             } catch {
@@ -395,7 +402,7 @@ foreach ($t in $targets) {
                     # Empty file, treat as new
                     $content = Get-Content $t.Src -Raw -Encoding UTF8
                     $content = $content.Replace('__USERNAME__', $env:USERNAME)
-                    Set-Content $t.Dst $content -Encoding UTF8 -Force
+                    Write-FileUtf8NoBom $t.Dst $content
                     Write-OK ($t.Title + " -> overwritten empty file")
                     $installedCount++
                     continue
@@ -411,7 +418,7 @@ foreach ($t in $targets) {
                     # Write fresh from template
                     $content = Get-Content $t.Src -Raw -Encoding UTF8
                     $content = $content.Replace('__USERNAME__', $env:USERNAME)
-                    Set-Content $t.Dst $content -Encoding UTF8 -Force
+                    Write-FileUtf8NoBom $t.Dst $content
                     Write-OK ($t.Title + " -> replaced (array detected, backup at " + $bakJson + ")")
                     $installedCount++
                     continue
@@ -425,7 +432,7 @@ foreach ($t in $targets) {
                 $merged = $existing | ConvertTo-Json -Depth 10
                 $merged = $merged -replace '\\/', '/'  # unescape forward slashes
 
-                Set-Content $t.Dst $merged -Encoding UTF8 -Force
+                Write-FileUtf8NoBom $t.Dst $merged
                 Write-OK ($t.Title + " -> merged statusLine (preserved existing settings)")
                 $installedCount++
             } catch {
@@ -441,7 +448,7 @@ foreach ($t in $targets) {
                 try {
                     $content = Get-Content $t.Src -Raw -Encoding UTF8
                     $content = $content.Replace('__USERNAME__', $env:USERNAME)
-                    Set-Content $t.Dst $content -Encoding UTF8 -Force
+                    Write-FileUtf8NoBom $t.Dst $content
                     Write-OK ($t.Title + " -> written from template")
                     $installedCount++
                 } catch {
@@ -454,7 +461,7 @@ foreach ($t in $targets) {
             try {
                 $content = Get-Content $t.Src -Raw -Encoding UTF8
                 $content = $content.Replace('__USERNAME__', $env:USERNAME)
-                Set-Content $t.Dst $content -Encoding UTF8 -Force
+                Write-FileUtf8NoBom $t.Dst $content
                 Write-OK ($t.Title + " -> created (with statusLine)")
                 $installedCount++
             } catch {
