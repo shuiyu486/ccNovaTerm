@@ -3,7 +3,6 @@
 - **终端**：WezTerm（Catppuccin Mocha 主题，JetBrainsMono Nerd Font）
 - **Shell**：Nushell | **Prompt**：Starship（Pastel Powerline） | **文件管理器**：Yazi
 - **OS**：Windows 10/11
-- 快捷键：Alt+C/V 复制粘贴，Alt+D 分屏，Alt+方向键切换分屏
 
 配置文件：`~/.wezterm.lua`、`~/AppData/Roaming/nushell/{env,config}.nu`、`~/.config/starship.toml`
 
