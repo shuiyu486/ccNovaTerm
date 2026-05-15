@@ -141,4 +141,4 @@ $el = if ($effort) { $e = $effort.ToLower(); if ($e -eq "max") { "${M}${B}MAX${R
 $ts = Get-Date -Format "HH:mm:ss"
 Write-Host "${Cy}${B}${model}${R} ${D}|${R} ${el} ${D}|${R} ${W}ctx:${R}${cc}${B}$(fmtW $inputTokens)${R}${D}/${R}${W}${B}$(fmtW $ctxSize)${R} ${cc}${B}${ctxPct}${R}%${D}"
 Write-Host "${G}${B}in:${R}${G}${B}$(fmtW $inputTokens)${R}  ${Y}${B}out:${R}${Y}${B}$(fmtW $outputTokens)${R} ${D}|${R} ${Bl}${B}ses:${R}${Bl}${B}$(fmtW $sesApi)${R} ${D}|${R} ${Rd}${B}api:${R}${Rd}${B}$(fmtW $apiTotal)${R} ${D}|${R} ${W}${B}${ts}${R}"
-Write-Host "${D}${W}$(Get-Location)${R}"
+Write-Host "${D}${Bl}path: ${W}$(Get-Location)${R}"
