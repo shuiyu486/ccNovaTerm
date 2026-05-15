@@ -27,7 +27,10 @@ try {
     $data = $ser.DeserializeObject($inputJson)
 } catch {}
 
-if (-not $data) { exit }
+if (-not $data) {
+	Write-Host "No data from Claude Code"
+	exit
+}
 
 # --- Extract values from Dictionary<string,object> ---
 $model = if ($data['model'] -and $data['model']['display_name']) { $data['model']['display_name'] } else { "unknown" }
@@ -53,15 +56,15 @@ try {
 $sesApi = 0; $apiTotal = 0
 $transcriptPath = if ($data['transcript_path']) { $data['transcript_path'] } else { "" }
 $cacheDir = Join-Path $env:TEMP "ccNovaTerm-statusline-cache"
-try { if (-not (Test-Path $cacheDir)) { New-Item -ItemType Directory -Force $cacheDir | Out-Null } } catch {}
+try { if (-not (Test-Path -LiteralPath $cacheDir)) { New-Item -ItemType Directory -Force -LiteralPath $cacheDir | Out-Null } } catch {}
 $sessionFile = if ($sessionPid -ne 0) { Join-Path $cacheDir "ses-$sessionPid.txt" } else { Join-Path $cacheDir "ses-default.txt" }
 
 $cApiAll = 0; $cAllLines = 0; $cAllPath = ""
 $cSesPid = 0; $cApiSesBase = 0
 $cLastIn = -1; $cLastOut = -1; $cLastCC = -1; $cLastCR = -1
-if (Test-Path $sessionFile) {
+if (Test-Path -LiteralPath $sessionFile) {
     try {
-        $cl = Get-Content $sessionFile -EA SilentlyContinue
+        $cl = Get-Content -LiteralPath $sessionFile -EA SilentlyContinue
         if ($cl.Count -ge 9) {
             [int]$cApiAll = $cl[0]; [int]$cAllLines = $cl[1]; $cAllPath = $cl[2]
             [int]$cSesPid = $cl[3]; [int]$cApiSesBase = $cl[4]
@@ -78,7 +81,7 @@ $pOut = '"output_tokens":(\d+)'
 $pCC = '"cache_creation_input_tokens":(\d+)'
 $pCR = '"cache_read_input_tokens":(\d+)'
 
-if ($transcriptPath -and (Test-Path $transcriptPath)) {
+if ($transcriptPath -and (Test-Path -LiteralPath $transcriptPath)) {
     try {
         $lineCount = 0
         $sr = New-Object System.IO.StreamReader($transcriptPath, [System.Text.Encoding]::UTF8)
@@ -123,7 +126,7 @@ if ($transcriptPath -and (Test-Path $transcriptPath)) {
             $sesApi = $apiTotal - $cApiSesBase
         } else { $cApiSesBase = $apiTotal; $sesApi = 0 }
 
-        Set-Content $sessionFile "$apiTotal`n$lineCount`n$transcriptPath`n$sessionPid`n$cApiSesBase`n$prevIn`n$prevOut`n$prevCC`n$prevCR" -Force -EA SilentlyContinue
+        Set-Content -LiteralPath $sessionFile "$apiTotal`n$lineCount`n$transcriptPath`n$sessionPid`n$cApiSesBase`n$prevIn`n$prevOut`n$prevCC`n$prevCR" -Force -EA SilentlyContinue
     } catch { $apiTotal = $inputTokens + $outputTokens; $sesApi = $inputTokens + $outputTokens }
 } else { $apiTotal = $inputTokens + $outputTokens; $sesApi = $inputTokens + $outputTokens }
 
