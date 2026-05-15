@@ -23,12 +23,26 @@
 
 ## 维护工作流
 
-本项目是 ccNovaTerm 的开发和维护工作目录。常用操作：
+本项目是 **ccNovaTerm** 和 **config-sync 技能** 的开发和维护工作目录。常用操作：
 
 **修改配置后**：
 1. 编辑配置文件 → 说"快速检查"验证兼容性
 2. 说"同步到项目"推送到 `config/` 模板
 3. git commit + push 到远程仓库
+
+**修改 config-sync 技能后**：
+config-sync 技能源码位于 `~/.claude/plugins/marketplaces/terr-marketplace/plugins/config-sync/`（同时是 terr-marketplace 的 git 仓库）。修改流程：
+1. 编辑技能文件（SKILL.md、references/*.md、scripts/*.ps1）
+2. 更新 `plugins/config-sync/.claude-plugin/plugin.json` 中的 `version` 字段
+3. 同步更新 `.claude-plugin/marketplace.json` 中 config-sync 条目的 `version`
+4. 提交并推送：
+   ```
+   cd ~/.claude/plugins/marketplaces/terr-marketplace
+   git add plugins/config-sync/ .claude-plugin/marketplace.json
+   git commit -m "sync: config-sync v<version> — <变更说明>"
+   git push
+   ```
+5. 用户端执行 `/plugin install config-sync` 即可更新
 
 **添加新的受管文件**：
 1. 将文件放入 `config/` 目录
