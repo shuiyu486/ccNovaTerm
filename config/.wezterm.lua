@@ -1,4 +1,4 @@
-local wezterm = require 'wezterm'
+﻿﻿local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
 -- Auto-detect nushell path per OS (placeholder replaced by installer on Windows)
@@ -15,6 +15,10 @@ config.initial_cols = 120
 config.initial_rows = 32
 config.enable_scroll_bar = true
 config.window_decorations = 'RESIZE'
+-- Kitty keyboard protocol disabled: interferes with Claude Code and other TUI apps
+-- that don't decode Kitty CSI sequences (causes dropped characters like , [ and IME truncation)
+config.enable_kitty_keyboard = false
+
 config.default_cursor_style = 'BlinkingBar'
 config.cursor_blink_rate = 500
 
