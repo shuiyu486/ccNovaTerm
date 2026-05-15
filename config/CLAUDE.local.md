@@ -33,16 +33,20 @@
 **修改 config-sync 技能后**：
 config-sync 技能源码位于 `~/.claude/plugins/marketplaces/terr-marketplace/plugins/config-sync/`（同时是 terr-marketplace 的 git 仓库）。修改流程：
 1. 编辑技能文件（SKILL.md、references/*.md、scripts/*.ps1）
-2. 更新 `plugins/config-sync/.claude-plugin/plugin.json` 中的 `version` 字段
-3. 同步更新 `.claude-plugin/marketplace.json` 中 config-sync 条目的 `version`
-4. 提交并推送：
+2. 运行验证确保无误：
+   - `claude plugin validate ~/.claude/plugins/marketplaces/terr-marketplace` 检查插件结构
+   - 说"快速检查"验证本地配置文件与模板兼容
+3. 更新 `plugins/config-sync/.claude-plugin/plugin.json` 中的 `version` 字段
+4. 同步更新 `.claude-plugin/marketplace.json` 中 config-sync 条目的 `version`
+5. 提交并推送：
    ```
    cd ~/.claude/plugins/marketplaces/terr-marketplace
    git add plugins/config-sync/ .claude-plugin/marketplace.json
    git commit -m "sync: config-sync v<version> — <变更说明>"
-   git push
+   git pull --rebase && git push
    ```
-5. 用户端执行 `/plugin install config-sync` 即可更新
+   - 若 push 被 rejected（远程有新提交），先 `git pull --rebase` 再 push
+6. 用户端执行 `/plugin install config-sync` 即可更新
 
 **添加新的受管文件**：
 1. 将文件放入 `config/` 目录
