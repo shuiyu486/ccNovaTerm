@@ -1,6 +1,6 @@
 {
   "statusLine": {
     "type": "command",
-    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/__USERNAME__/.claude/statusline.ps1"
+    "command": "bash -c \"source ~/.claude/statusline-wrapper.sh\""
   }
 }

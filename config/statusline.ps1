@@ -1,21 +1,19 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# --- Read JSON from stdin as raw bytes, decode with UTF-8 ---
+# --- Read JSON from temp file (written by bash wrapper in settings.json) ---
+# Claude Code on Windows does not close stdin pipe, so PowerShell cannot
+# read stdin directly. The command in settings.json uses bash to relay:
+#   bash -c "cat > /tmp/claude-statusline.json; powershell -NoProfile ..."
+# `cat` reads stdin until EOF (which Claude Code does send eventually),
+# writes to temp file, then PowerShell reads the file.
+$jsonFile = Join-Path $env:TEMP "claude-statusline.json"
 $inputJson = ""
-$rawBytes = $null
-try {
-    $stream = [Console]::OpenStandardInput()
-    $ms = New-Object System.IO.MemoryStream
-    $stream.CopyTo($ms)
-    $rawBytes = $ms.ToArray()
-    $ms.Close()
-} catch {}
-
-if ($rawBytes -and $rawBytes.Length -gt 0) {
-    $inputJson = [System.Text.Encoding]::UTF8.GetString($rawBytes)
+if (Test-Path -LiteralPath $jsonFile) {
+    try {
+        $bytes = [System.IO.File]::ReadAllBytes($jsonFile)
+        $inputJson = [System.Text.Encoding]::UTF8.GetString($bytes).Trim()
+    } catch {}
 }
-
-if (-not $inputJson) { try { $inputJson = $input | Out-String } catch {} }
 if (-not $inputJson.Trim()) { exit }
 
 # --- Parse JSON using .NET JavaScriptSerializer (bypasses PS5.1 ConvertFrom-Json encoding bugs) ---
@@ -28,8 +26,8 @@ try {
 } catch {}
 
 if (-not $data) {
-	Write-Host "No data from Claude Code"
-	exit
+    Write-Host "No data from Claude Code"
+    exit
 }
 
 # --- Extract values from Dictionary<string,object> ---
