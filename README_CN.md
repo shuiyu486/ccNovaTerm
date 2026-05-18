@@ -1,131 +1,119 @@
-<h1 align="center">ccNovaTerm</h1>
-<p align="center">
-  <b>Claude Code 的美化终端</b><br>
-  <sub>WezTerm · Nushell · Starship · Yazi — 一键部署，全副武装</sub>
-</p>
+# ccNovaTerm
 
-<p align="center">
-  <a href="README.md">English</a>
-</p>
+> **C**laude **C**ode + **Nova** **Term**inal — 一键打造 Claude Code 专属终端环境
 
-<p align="center">
-  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS-blue?style=flat-square" alt="Platform">
-  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/Claude%20Code-v2.1%2B-orange?style=flat-square" alt="Claude Code">
-</p>
+[![English](https://img.shields.io/badge/lang-English-blue.svg)](./README.md)
+[![中文](https://img.shields.io/badge/lang-中文-red.svg)](./README_CN.md)
 
-<p align="center">
-  <img src="docs/hero.png" alt="ccNovaTerm" width="100%">
-</p>
+一个自动化配置工具，将 [WezTerm](https://wezfurlong.org/wezterm/) + [Nushell](https://www.nushell.sh/) + [Starship](https://starship.rs/) + [Yazi](https://yazi-rs.github.io/) 打包为 Claude Code 的完美终端体验。
 
----
+![ccNovaTerm](docs/hero.png)
 
-## 核心特性
+## ✨ 特性
 
-- **一键部署** — `install.ps1`（Windows）或 `install.sh`（macOS），自动备份、路径检测
-- **Pastel Powerline 提示符** — 用户、目录、Git 分支/状态、语言版本、Docker、时间，全彩色展示
-- **GPU 加速终端** — WezTerm + Catppuccin Mocha 主题 + JetBrainsMono Nerd Font
-- **Yazi cd-on-exit** — 退出文件管理器自动 cd 到浏览目录
+- 🚀 **一键安装** — 单条命令完成全部配置
+- 🎨 **Catppuccin Mocha** — WezTerm、Starship 全局统一主题
+- 🔤 **Nerd Font** — JetBrainsMono Nerd Font 开箱即用
+- 🐚 **Nushell** — 现代化结构化 Shell，内置 `cc` 别名直达 Claude Code
+- 📁 **Yazi** — 终端文件管理器，无缝集成
+- 🔄 **config-sync** — Claude Code 技能，双向同步终端配置
 
-## Statusline
+## 📋 前置要求
 
-安装 [cc-statusline 插件](https://github.com/shuiyu486/terr-marketplace) 获取功能丰富的状态栏：真实 token 统计、effort 等级、上下文用量、会话 API 消耗——全部去重，计费精确。
+| 工具 | 说明 |
+|------|------|
+| [WezTerm](https://wezfurlong.org/weizterm/) | GPU 加速终端模拟器 |
+| [Nushell](https://www.nushell.sh/) | 结构化 Shell |
+| [Starship](https://starship.rs/) | 可定制的 Shell 提示符 |
+| [Yazi](https://yazi-rs.github.io/) | 终端文件管理器 |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | AI 编程助手 CLI |
+| [Git for Windows](https://git-scm.com/) | 版本控制（Windows 需要 `usr/bin` 中的 `file.exe`） |
+| [JetBrainsMono Nerd Font](https://www.nerdfonts.com/font-downloads) | 图标和符号支持 |
 
-```shell
-/plugin install cc-statusline
-/cc-statusline:setup
-```
+## 🚀 安装
 
-<p align="center">
-  <img src="docs/statusline.png" alt="Statusline close-up" width="80%">
-</p>
+### Windows
 
-## 安装
-
-### 前置软件
-
-**Windows：**
 ```powershell
-winget install wez.wezterm Nushell.Nushell Starship.Starship Git.Git
+irm https://raw.githubusercontent.com/shuiyu486/ccNovaTerm/main/install.ps1 | iex
 ```
 
-**macOS：**
-```bash
-brew install --cask wezterm
-brew install nushell starship yazi git
-```
-
-[Yazi](https://github.com/sxyazi/yazi/releases) · [Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases)（JetBrainsMono.zip） · `npm install -g @anthropic-ai/claude-code`
-
-### 一键安装
+### macOS
 
 ```bash
-git clone https://github.com/shuiyu486/ccNovaTerm.git
-cd ccNovaTerm
-
-# Windows
-.\install.ps1
-
-# macOS
-./install.sh
+curl -fsSL https://raw.githubusercontent.com/shuiyu486/ccNovaTerm/main/install.sh | bash
 ```
 
-<p align="center">
-  <img src="docs/install.png" alt="Install process" width="80%">
-</p>
+安装脚本会：
+1. 检测所有前置依赖
+2. 用系统路径替换配置模板中的占位符
+3. 将配置文件部署到正确位置
+4. 备份已有配置
 
-| 参数 | 作用 |
+## 📁 项目结构
+
+```
+ccNovaTerm/
+├── config/           ← 配置模板
+│   ├── .wezterm.lua  ← WezTerm 配置（Catppuccin Mocha 主题）
+│   ├── config.nu     ← Nushell 配置（别名、Yazi 集成）
+│   ├── env.nu        ← Nushell 环境变量
+│   ├── starship.toml ← Starship 提示符（Pastel Powerline）
+│   └── CLAUDE.local.md ← 项目级 Claude Code 指令
+├── docs/             ← 截图
+├── test/             ← 测试脚本
+├── install.ps1       ← Windows 安装脚本
+├── install.sh        ← macOS 安装脚本
+└── CLAUDE.local.md   ← 本文件
+```
+
+## 🔄 config-sync 技能
+
+ccNovaTerm 包含一个 [Claude Code 技能](https://docs.anthropic.com/en/docs/claude-code/skills)，用于在本地环境和项目模板之间双向同步配置。
+
+### 安装
+
+```bash
+/plugin install config-sync
+```
+
+### 使用
+
+在 Claude Code 中直接说：
+
+| 命令 | 操作 |
 |------|------|
-| `-DryRun` / `--dry-run` | 预览，不写入 |
-| `-Force` / `--force` | 跳过确认 |
-| `-NoBackup` / `--no-backup` | 不备份现有配置 |
+| "同步到本地" | 项目模板 → 本地配置 |
+| "同步到项目" | 本地配置 → 项目模板 |
+| "对比" | 显示本地与模板的差异 |
+| "快速检查" | 验证配置兼容性 |
 
-状态栏已独立为 [cc-statusline 插件](https://github.com/shuiyu486/terr-marketplace) — `/plugin install cc-statusline` 然后 `/cc-statusline:setup`。
+### 占位符
 
-## 快捷键
+模板使用占位符，安装时自动替换为实际系统路径：
 
-| 快捷键 | 功能 | | 快捷键 | 功能 |
-|--------|------|-|--------|------|
-| `Alt+C` | 复制 | | `Alt+V` | 粘贴 |
-| `Ctrl+Shift+T` | 新建标签 | | `Ctrl+Shift+W` | 关闭标签 |
-| `Alt+D` | 右侧分屏 | | `Alt+Shift+D` | 下方分屏 |
-| `Alt+←↑↓→` | 切换分屏 | | `Alt+X` | 关闭分屏 |
-| `Alt+H` | 隐藏窗口 | | `右键` | 复制/粘贴 |
-| `Shift+Enter` | 换行 (Claude Code) | | | |
+| 占位符 | 替换为 |
+|--------|--------|
+| `__NU_PATH__` | Nushell 可执行文件完整路径（Windows）或 `'nu'`（macOS） |
+| `__GIT_USR_BIN__` | Git 安装目录下的 `usr/bin` 路径 |
 
-Nushell：键入 `y` 启动 Yazi，退出自动 cd。`cc` 是 `claude` 的快捷别名。
+## 🛠️ 自定义
 
-<details>
-<summary><b>自定义 WezTerm / Starship / 代理</b></summary>
+所有配置文件都是标准的，可以直接编辑：
 
-**WezTerm** — Windows: `~\.wezterm.lua`，macOS: `~/.config/wezterm/wezterm.lua` — 改 `color_scheme`、`font_size`、`initial_cols`
+- **WezTerm**：编辑 `~/.wezterm.lua` — 字体、颜色、快捷键
+- **Nushell**：编辑 `~/AppData/Roaming/nushell/config.nu`（Windows）或 `~/.config/nushell/config.nu`（macOS）
+- **Starship**：编辑 `~/.config/starship.toml` — 提示符样式和模块
+- **环境变量**：编辑 `~/AppData/Roaming/nushell/env.nu`（Windows）或 `~/.config/nushell/env.nu`（macOS）
 
-**Starship** `~\.config\starship.toml` — 参考[预设](https://starship.rs/presets/)
+修改后，使用 config-sync 的"同步到项目"将更改推回模板。
 
-**代理** — Windows: `~\AppData\Roaming\nushell\env.nu`，macOS: `~/Library/Application Support/nushell/env.nu` — 取消注释 `load-env` 行
+## 📸 截图
 
-</details>
+![安装过程](docs/install.png)
 
-## 文件清单
+![状态栏](docs/statusline.png)
 
-```
-安装后:
-  ~/.wezterm.lua  或  ~/.config/wezterm/wezterm.lua  （Win / Mac）
-  nushell config.nu + env.nu                         （系统相关路径）
-  ~/.config/starship.toml                            （双平台）
+## 📄 许可证
 
-运行时:
-  ccNovaTerm-backup/                                      （用户目录）
-```
-
-## 已知问题
-
-| 问题 | 解决 |
-|------|------|
-| WezTerm 启动不了 | 升级 NVIDIA 驱动 |
-| 字体装不上 | 关闭 WezTerm 再装 |
-| 光标变白块 | ink/DECSCUSR，暂无解 |
-
-## License
-
-[MIT](LICENSE)
+MIT License — 详见 [LICENSE](LICENSE) 文件。
