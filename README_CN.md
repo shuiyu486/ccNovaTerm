@@ -22,28 +22,23 @@
 
 ## 核心特性
 
-- **一键部署** — `install.ps1`（Windows）或 `install.sh`（macOS），自动备份、路径检测、智能合并
-- **真实 Token 统计** — 解析 transcript JSONL，自动去重同一 API 调用的多条记录，精确计费
+- **一键部署** — `install.ps1`（Windows）或 `install.sh`（macOS），自动备份、路径检测
 - **Pastel Powerline 提示符** — 用户、目录、Git 分支/状态、语言版本、Docker、时间，全彩色展示
 - **GPU 加速终端** — WezTerm + Catppuccin Mocha 主题 + JetBrainsMono Nerd Font
 - **Yazi cd-on-exit** — 退出文件管理器自动 cd 到浏览目录
 
 ## Statusline
 
+安装 [cc-statusline 插件](https://github.com/shuiyu486/terr-marketplace) 获取功能丰富的状态栏：真实 token 统计、effort 等级、上下文用量、会话 API 消耗——全部去重，计费精确。
+
+```shell
+/plugin install cc-statusline
+/cc-statusline:setup
+```
+
 <p align="center">
   <img src="docs/statusline.png" alt="Statusline close-up" width="80%">
 </p>
-
-| 字段 | 颜色 | 含义 |
-|------|------|------|
-| `model` | 青 | 当前模型 |
-| `effort` | 多色 | low→青 med→绿 high→黄粗 xhigh→红粗 MAX→紫粗 |
-| `ctx` | 绿→黄→红 | 上下文窗口占比（70% 黄，90% 红） |
-| `in` / `out` | 绿 / 黄 | 当前上下文输入/输出 token |
-| `ses` | 蓝 | 当前进程累计 API 消耗（去重） |
-| `api` | 红 | 全程累计 API 消耗（去重） |
-
-> 每次 API 调用产生 2-6 条相同 usage 的 transcript 记录（思考 + 文本 + 工具调用）。`ses` / `api` 自动跳过重复条目，统计误差 < 1%。
 
 ## 安装
 
@@ -128,12 +123,8 @@ Nushell：键入 `y` 启动 Yazi，退出自动 cd。`cc` 是 `claude` 的快捷
 | 问题 | 解决 |
 |------|------|
 | WezTerm 启动不了 | 升级 NVIDIA 驱动 |
-| Token 统计虚高 | 已内置去重，无需处理 |
 | 字体装不上 | 关闭 WezTerm 再装 |
 | 光标变白块 | ink/DECSCUSR，暂无解 |
-| Statusline 中文乱码 | 已修复（原始字节 + UTF-8 解码） |
-| 切换项目后 ses 为负 | 已修复（transcript path + apiTotal 检查） |
-| 多窗口 ses 冲突 | 已修复（按 PID 隔离缓存文件） |
 
 ## License
 

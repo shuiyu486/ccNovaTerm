@@ -22,28 +22,23 @@
 
 ## Features
 
-- **One-command setup** — `.\install.ps1` (Win) or `./install.sh` (Mac), auto backup, path detection, smart merge
-- **Real token tracking** — Parses Claude Code transcript JSONL, deduplicates multi-block API calls, accurate billing
+- **One-command setup** — `.\install.ps1` (Win) or `./install.sh` (Mac), auto backup, path detection
 - **Pastel Powerline prompt** — User, directory, Git branch/status, language versions, Docker, clock — full color
 - **GPU-accelerated** — WezTerm + Catppuccin Mocha theme + JetBrainsMono Nerd Font
 - **Yazi cd-on-exit** — Exit the file manager and land in the browsed directory
 
 ## Statusline
 
+Install the [cc-statusline plugin](https://github.com/shuiyu486/terr-marketplace) for a feature-rich status line with real token tracking, effort level, context usage, and session API cost — all deduplicated for billing accuracy.
+
+```shell
+/plugin install cc-statusline
+/cc-statusline:setup
+```
+
 <p align="center">
   <img src="docs/statusline.png" alt="Statusline close-up" width="80%">
 </p>
-
-| Field | Color | Meaning |
-|-------|-------|---------|
-| `model` | Cyan | Current model name |
-| `effort` | Multi | low→cyan med→green high→yellow-bold xhigh→red-bold MAX→purple-bold |
-| `ctx` | Green→Red | Context window usage (yellow at 70%, red at 90%) |
-| `in` / `out` | Green / Yellow | Current context input / output tokens |
-| `ses` | Blue | Cumulative API tokens for current Claude Code process (deduped) |
-| `api` | Red | Cumulative API tokens across the entire transcript (deduped) |
-
-> Claude Code writes 2-6 transcript entries per API call (thinking + text + tool calls) — all with identical `usage`. `ses` / `api` deduplicate consecutively, keeping billing accurate within < 1%.
 
 ## Install
 
@@ -128,12 +123,8 @@ Runtime:
 | Issue | Fix |
 |-------|-----|
 | WezTerm won't start | Update NVIDIA GPU drivers |
-| Token count inflated | Built-in dedup — no action needed |
 | Font fails to install | Close WezTerm before installing |
 | Cursor turns white block | ink/DECSCUSR issue, no fix yet |
-| Statusline garbled with Chinese | Fixed (raw bytes + UTF-8 decode) |
-| ses negative after switching project | Fixed (transcript path + apiTotal check) |
-| Multi-window ses conflict | Fixed (per-PID cache isolation) |
 
 ## License
 
