@@ -1,131 +1,119 @@
-<h1 align="center">ccNovaTerm</h1>
-<p align="center">
-  <b>Beautiful Terminal for Claude Code</b><br>
-  <sub>WezTerm · Nushell · Starship · Yazi — one command, fully equipped.</sub>
-</p>
+# ccNovaTerm
 
-<p align="center">
-  <a href="README_CN.md">中文文档</a>
-</p>
+> **C**laude **C**ode + **Nova** **Term**inal — One command, fully equipped terminal for Claude Code
 
-<p align="center">
-  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS-blue?style=flat-square" alt="Platform">
-  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/Claude%20Code-v2.1%2B-orange?style=flat-square" alt="Claude Code">
-</p>
+[![English](https://img.shields.io/badge/lang-English-blue.svg)](./README.md)
+[![中文](https://img.shields.io/badge/lang-中文-red.svg)](./README_CN.md)
 
-<p align="center">
-  <img src="docs/hero.png" alt="ccNovaTerm" width="100%">
-</p>
+An automated setup that bundles [WezTerm](https://wezfurlong.org/wezterm/) + [Nushell](https://www.nushell.sh/) + [Starship](https://starship.rs/) + [Yazi](https://yazi-rs.github.io/) into the perfect terminal experience for Claude Code.
 
----
+![ccNovaTerm](docs/hero.png)
 
-## Features
+## ✨ Features
 
-- **One-command setup** — `.\install.ps1` (Win) or `./install.sh` (Mac), auto backup, path detection
-- **Pastel Powerline prompt** — User, directory, Git branch/status, language versions, Docker, clock — full color
-- **GPU-accelerated** — WezTerm + Catppuccin Mocha theme + JetBrainsMono Nerd Font
-- **Yazi cd-on-exit** — Exit the file manager and land in the browsed directory
+- 🚀 **One-command setup** — Single command, full configuration
+- 🎨 **Catppuccin Mocha** — Unified theme across WezTerm and Starship
+- 🔤 **Nerd Font** — JetBrainsMono Nerd Font, ready to use
+- 🐚 **Nushell** — Modern structured shell, with `cc` alias for instant Claude Code access
+- 📁 **Yazi** — Terminal file manager, seamlessly integrated
+- 🔄 **config-sync** — Claude Code skill for bidirectional config sync
 
-## Statusline
+## 📋 Prerequisites
 
-Install the [cc-statusline plugin](https://github.com/shuiyu486/terr-marketplace) for a feature-rich status line with real token tracking, effort level, context usage, and session API cost — all deduplicated for billing accuracy.
+| Tool | Description |
+|------|-------------|
+| [WezTerm](https://wezfurlong.org/wezterm/) | GPU-accelerated terminal emulator |
+| [Nushell](https://www.nushell.sh/) | Structured shell |
+| [Starship](https://starship.rs/) | Customizable shell prompt |
+| [Yazi](https://yazi-rs.github.io/) | Terminal file manager |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | AI coding assistant CLI |
+| [Git for Windows](https://git-scm.com/) | Version control (Windows needs `file.exe` from `usr/bin`) |
+| [JetBrainsMono Nerd Font](https://www.nerdfonts.com/font-downloads) | Icon and symbol support |
 
-```shell
-/plugin install cc-statusline
-/cc-statusline:setup
-```
+## 🚀 Install
 
-<p align="center">
-  <img src="docs/statusline.png" alt="Statusline close-up" width="80%">
-</p>
+### Windows
 
-## Install
-
-### Prerequisites
-
-**Windows:**
 ```powershell
-winget install wez.wezterm Nushell.Nushell Starship.Starship Git.Git
+irm https://raw.githubusercontent.com/shuiyu486/ccNovaTerm/main/install.ps1 | iex
 ```
 
-**macOS:**
-```bash
-brew install --cask wezterm
-brew install nushell starship yazi git
-```
-
-[Yazi](https://github.com/sxyazi/yazi/releases) · [Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases) (JetBrainsMono.zip) · `npm install -g @anthropic-ai/claude-code`
-
-### One-command install
+### macOS
 
 ```bash
-git clone https://github.com/shuiyu486/ccNovaTerm.git
-cd ccNovaTerm
-
-# Windows
-.\install.ps1
-
-# macOS
-./install.sh
+curl -fsSL https://raw.githubusercontent.com/shuiyu486/ccNovaTerm/main/install.sh | bash
 ```
 
-<p align="center">
-  <img src="docs/install.png" alt="Install process" width="80%">
-</p>
+The installer will:
+1. Detect all prerequisites
+2. Replace placeholders in config templates with actual system paths
+3. Deploy config files to the correct locations
+4. Back up any existing configs
 
-| Flag | Effect |
-|------|--------|
-| `-DryRun` / `--dry-run` | Preview only, no writes |
-| `-Force` / `--force` | Skip confirmations |
-| `-NoBackup` / `--no-backup` | Skip backing up existing configs |
-
-For status line, install the [cc-statusline plugin](https://github.com/shuiyu486/terr-marketplace) — `/plugin install cc-statusline` then `/cc-statusline:setup`.
-
-## Keybindings
-
-| Shortcut | Action | | Shortcut | Action |
-|----------|--------|-|----------|--------|
-| `Alt+C` | Copy | | `Alt+V` | Paste |
-| `Ctrl+Shift+T` | New tab | | `Ctrl+Shift+W` | Close tab |
-| `Alt+D` | Split right | | `Alt+Shift+D` | Split down |
-| `Alt+Arrows` | Switch pane | | `Alt+X` | Close pane |
-| `Alt+H` | Hide window | | `Right-click` | Smart copy/paste |
-| `Shift+Enter` | Newline (Claude Code) | | | |
-
-Nushell: type `y` to launch Yazi, exit to auto-cd. `cc` is aliased to `claude` for quick access.
-
-<details>
-<summary><b>Customization — WezTerm / Starship / Proxy</b></summary>
-
-**WezTerm** `~/.wezterm.lua` (Win) or `~/.config/wezterm/wezterm.lua` (Mac) — change `color_scheme`, `font_size`, `initial_cols`
-
-**Starship** `~/.config/starship.toml` — see [presets](https://starship.rs/presets/)
-
-**Proxy** — Windows: `~\AppData\Roaming\nushell\env.nu`, macOS: `~/Library/Application Support/nushell/env.nu` — uncomment the `load-env` line
-
-</details>
-
-## Files
+## 📁 Project Structure
 
 ```
-After install:
-  ~/.wezterm.lua  or  ~/.config/wezterm/wezterm.lua   (Win / Mac)
-  nushell config.nu + env.nu                            (OS-dependent path)
-  ~/.config/starship.toml                               (Both)
-
-Runtime:
-  ccNovaTerm-backup/                                    (Home dir)
+ccNovaTerm/
+├── config/           ← Config templates
+│   ├── .wezterm.lua  ← WezTerm config (Catppuccin Mocha theme)
+│   ├── config.nu     ← Nushell config (aliases, Yazi integration)
+│   ├── env.nu        ← Nushell environment variables
+│   ├── starship.toml ← Starship prompt (Pastel Powerline)
+│   └── CLAUDE.local.md ← Project-level Claude Code instructions
+├── docs/             ← Screenshots
+├── test/             ← Test scripts
+├── install.ps1       ← Windows installer
+├── install.sh        ← macOS installer
+└── CLAUDE.local.md   ← This file
 ```
 
-## Known Issues
+## 🔄 config-sync Skill
 
-| Issue | Fix |
-|-------|-----|
-| WezTerm won't start | Update NVIDIA GPU drivers |
-| Font fails to install | Close WezTerm before installing |
-| Cursor turns white block | ink/DECSCUSR issue, no fix yet |
+ccNovaTerm includes a [Claude Code skill](https://docs.anthropic.com/en/docs/claude-code/skills) for bidirectional config sync between your local environment and project templates.
 
-## License
+### Install
 
-[MIT](LICENSE)
+```bash
+/plugin install config-sync
+```
+
+### Usage
+
+Just tell Claude Code:
+
+| Command | Action |
+|---------|--------|
+| "Sync to local" | Project templates → local configs |
+| "Sync to project" | Local configs → project templates |
+| "Compare" | Show diffs between local and templates |
+| "Quick check" | Verify config compatibility |
+
+### Placeholders
+
+Templates use placeholders that are auto-replaced with actual system paths during install:
+
+| Placeholder | Replaced with |
+|-------------|--------------|
+| `__NU_PATH__` | Full path to Nushell executable (Windows) or `'nu'` (macOS) |
+| `__GIT_USR_BIN__` | `usr/bin` path under Git install directory |
+
+## 🛠️ Customization
+
+All config files are standard and can be edited directly:
+
+- **WezTerm**: Edit `~/.wezterm.lua` — font, colors, keybindings
+- **Nushell**: Edit `~/AppData/Roaming/nushell/config.nu` (Windows) or `~/.config/nushell/config.nu` (macOS)
+- **Starship**: Edit `~/.config/starship.toml` — prompt style and modules
+- **Environment**: Edit `~/AppData/Roaming/nushell/env.nu` (Windows) or `~/.config/nushell/env.nu` (macOS)
+
+After changes, use config-sync's "Sync to project" to push them back to templates.
+
+## 📸 Screenshots
+
+![Install process](docs/install.png)
+
+![Statusline](docs/statusline.png)
+
+## 📄 License
+
+MIT License — See [LICENSE](LICENSE) for details.
