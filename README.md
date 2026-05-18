@@ -85,7 +85,7 @@ cd ccNovaTerm
 | `-Force` / `--force` | Skip confirmations |
 | `-NoBackup` / `--no-backup` | Skip backing up existing configs |
 
-`settings.json` is **merged** — only `statusLine` is added/updated, your API keys and model settings stay untouched.
+For status line, install the [cc-statusline plugin](https://github.com/shuiyu486/terr-marketplace) — `/plugin install cc-statusline` then `/cc-statusline:setup`.
 
 ## Keybindings
 
@@ -101,13 +101,11 @@ cd ccNovaTerm
 Nushell: type `y` to launch Yazi, exit to auto-cd. `cc` is aliased to `claude` for quick access.
 
 <details>
-<summary><b>Customization — WezTerm / Starship / Statusline / Proxy</b></summary>
+<summary><b>Customization — WezTerm / Starship / Proxy</b></summary>
 
 **WezTerm** `~/.wezterm.lua` (Win) or `~/.config/wezterm/wezterm.lua` (Mac) — change `color_scheme`, `font_size`, `initial_cols`
 
 **Starship** `~/.config/starship.toml` — see [presets](https://starship.rs/presets/)
-
-**Statusline** `~/.claude/statusline.ps1` — ANSI color codes at the bottom: `"32m"` green, `"33m"` yellow, `"31m"` red
 
 **Proxy** — Windows: `~\AppData\Roaming\nushell\env.nu`, macOS: `~/Library/Application Support/nushell/env.nu` — uncomment the `load-env` line
 
@@ -120,10 +118,8 @@ After install:
   ~/.wezterm.lua  or  ~/.config/wezterm/wezterm.lua   (Win / Mac)
   nushell config.nu + env.nu                            (OS-dependent path)
   ~/.config/starship.toml                               (Both)
-  ~/.claude/statusline.ps1 + settings.json              (Both)
 
 Runtime:
-  ccNovaTerm-statusline-cache/ses-{PID}.txt             (Temp dir, per-window)
   ccNovaTerm-backup/                                    (Home dir)
 ```
 

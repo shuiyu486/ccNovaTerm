@@ -18,8 +18,7 @@ ccNovaTerm/
 │   ├── config.nu          # Nushell Shell 配置
 │   ├── env.nu             # Nushell 环境变量
 │   ├── starship.toml      # Starship 提示符
-│   ├── statusline.ps1     # Claude Code 状态栏脚本
-│   └── settings.json      # Claude Code 最小设置模板
+│   └── CLAUDE.local.md    # Claude Code 项目指令
 ├── docs/                  # README 图片
 │   ├── hero.png           # 全终端截图 (1200×650)
 │   ├── install.png        # 安装过程截图 (800×400)
@@ -38,22 +37,12 @@ ccNovaTerm/
 |--------|--------|---------|
 | `__NU_PATH__` | `nu.exe` 完整路径（Windows 双反斜杠） | `.wezterm.lua` |
 | `__GIT_USR_BIN__` | Git `usr/bin` 目录路径 | `env.nu` |
-| `__USERNAME__` | 当前用户名 | `settings.json` |
 
-模板不能用实际路径，因为每台机器的用户名、安装位置不同。
+模板不能用实际路径，因为每台机器的安装位置不同。
 
-### settings.json 合并策略
+### 状态栏已独立
 
-`~/.claude/settings.json` **不做覆盖**，只合并 `statusLine` 字段。用户已有的 API key、模型设置、权限配置完全保留。
-
-实现：
-- PowerShell (Win)：读 JSON → `Add-Member -Force` → 写回
-- Python3 (Mac)：`json.load` → 修改 dict → `json.dump`
-
-容错：
-- 空文件 → 当作新文件写入模板
-- 顶层是数组 → 备份后重写
-- 解析失败 → 备份原始文件，写入模板
+状态栏功能已独立为 [cc-statusline 插件](https://github.com/shuiyu486/terr-marketplace)，不再由 ccNovaTerm 管理。用户通过 `/plugin install cc-statusline` + `/cc-statusline:setup` 安装。
 
 ### 跨平台路径差异
 
@@ -63,7 +52,6 @@ ccNovaTerm/
 | Nushell config | `~\AppData\Roaming\nushell\config.nu` | `~/Library/Application Support/nushell/config.nu` |
 | Nushell env | `~\AppData\Roaming\nushell\env.nu` | `~/Library/Application Support/nushell/env.nu` |
 | Starship | `~/.config/starship.toml` | `~/.config/starship.toml` |
-| Claude Code | `~/.claude/statusline.ps1` + `settings.json` | `~/.claude/statusline.ps1` + `settings.json` |
 
 WezTerm 配置通过 `wezterm.target_triple` 检测 OS，Windows 使用完整 nu.exe 路径，macOS 使用 `nu`（依赖 PATH）。
 
@@ -76,13 +64,9 @@ WezTerm 配置通过 `wezterm.target_triple` 检测 OS，Windows 使用完整 nu
 - Windows：`~\ccNovaTerm-backup\yyyyMMdd_HHmmss\`
 - macOS：`~/ccNovaTerm-backup/yyyyMMdd_HHmmss/`
 
-### 状态栏缓存文件
+### 状态栏缓存文件（已独立为 cc-statusline 插件）
 
-`%TEMP%\ccNovaTerm-statusline-cache\ses-{PID}.txt`（Windows）/ `$TMPDIR/ccNovaTerm-statusline-cache/ses-{PID}.txt`（macOS）。每个 claude.exe PID 使用独立缓存文件，避免多窗口写同一文件冲突。9 行格式：
-```
-<apiAll>|<lineCount>|<transcriptPath>|<sesPid>|<apiSesBase>|<lastIn>|<lastOut>|<lastCC>|<lastCR>
-```
-lastIn/Out/CC/CR 用于跨边界去重（增量解析时知道上一条已计数 entry 的 usage 值）。
+缓存机制已迁移到 cc-statusline 插件中，使用 `cc-statusline-cache/ses-{PID}.txt`。
 
 ### Token 去重核心逻辑
 
@@ -106,13 +90,13 @@ Claude Code 每次 API 调用在 transcript JSONL 中产生 2-6 行 `type: "mess
 - 脚本新增 flag 要同时更新两个平台的参数表
 - README 的参数表也需同步更新
 
-### 修改状态栏 (statusline.ps1)
+### 修改状态栏
 
-状态栏由 Claude Code 通过 `statusLine.command` 调用。修改后：
-1. 用实际 transcript 测试 token 计数准确性
-2. 检查 ANSI 颜色输出在 WezTerm 中显示正常
-3. 检查增量解析不会重复计数（连续两次调用后 ses/api 增量正确）
-4. 更新 `wezterm-nushell-setup.md`（本地环境文档）和 README 的字段说明
+状态栏已独立为 cc-statusline 插件。修改流程：
+1. 编辑 `~/.claude/plugins/marketplaces/terr-marketplace/plugins/cc-statusline/src/` 下的 TypeScript 源码
+2. `npm run build` 编译
+3. 用实际 transcript 测试 token 计数准确性
+4. 检查 ANSI 颜色输出在 WezTerm 中显示正常
 
 ### 更新 README 图片
 
@@ -178,7 +162,7 @@ hero.png 需要展示完整终端环境（Starship 提示符 + claude 运行 + s
 
 - 状态栏缓存格式变更（如 5→7→9 行）时，`$cl.Count -ge N` 校验会清掉旧缓存自动重建
 - 缓存文件按 PID 隔离（`ses-{PID}.txt`），切换项目或新开窗口不会互相干扰
-- `settings.json` 合并依赖 `Add-Member -Force`（Win）或 `python3`（Mac），修改合并逻辑需两边同步
+- 状态栏已独立为 cc-statusline 插件，不再由 ccNovaTerm 管理
 - WezTerm 的 `window_decorations = 'RESIZE'` 是刻意为之——`INTEGRATED_BUTTONS` 会导致中文 IME 失效
 - 鼠标绑定用 `Up` 事件而非 `Down`——避免拖拽选区异常
 - `config.nu` 中 yazi 参数顺序 `--cwd-file $tmp ...$args` 不可颠倒

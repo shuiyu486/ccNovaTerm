@@ -130,9 +130,6 @@ NUSHELL_DIR="$HOME_DIR/Library/Application Support/nushell"
 NUSHELL_CONFIG_DST="$NUSHELL_DIR/config.nu"
 NUSHELL_ENV_DST="$NUSHELL_DIR/env.nu"
 STARSHIP_DST="$HOME_DIR/.config/starship.toml"
-CLAUDE_DIR="$HOME_DIR/.claude"
-STATUSLINE_DST="$CLAUDE_DIR/statusline.ps1"
-SETTINGS_DST="$CLAUDE_DIR/settings.json"
 
 # ============================================================
 # Backup
@@ -152,8 +149,6 @@ if ! $NO_BACKUP && ! $DRY_RUN; then
   backup_file "$NUSHELL_CONFIG_DST"
   backup_file "$NUSHELL_ENV_DST"
   backup_file "$STARSHIP_DST"
-  backup_file "$STATUSLINE_DST"
-  backup_file "$SETTINGS_DST"
   if ! $has_backup; then
     info "No existing configs to backup"
   fi
@@ -224,58 +219,6 @@ copy_config ".wezterm.lua"   "$WEZTERM_DST"
 copy_config "config.nu"       "$NUSHELL_CONFIG_DST"
 copy_config "env.nu"          "$NUSHELL_ENV_DST"
 copy_config "starship.toml"   "$STARSHIP_DST"
-copy_config "statusline.ps1"  "$STATUSLINE_DST"
-
-# Merge settings.json
-merge_settings() {
-  local src="$CONFIG_DIR/settings.json"
-  local dst="$SETTINGS_DST"
-
-  if $DRY_RUN; then
-    info "Would merge statusLine into: $dst"
-    return
-  fi
-
-  mkdir -p "$CLAUDE_DIR"
-
-  local cmd="powershell -NoProfile -ExecutionPolicy Bypass -File $CLAUDE_DIR/statusline.ps1"
-  # On macOS, use pwsh (PowerShell Core) instead of powershell
-  if check_cmd pwsh; then
-    cmd="pwsh -NoProfile -ExecutionPolicy Bypass -File $CLAUDE_DIR/statusline.ps1"
-  fi
-
-  if [ -f "$dst" ]; then
-    # Use python3 (preinstalled on macOS) to merge JSON
-    if check_cmd python3; then
-      python3 -c "
-import json, sys
-try:
-    with open('$dst') as f:
-        existing = json.load(f)
-except:
-    existing = {}
-existing['statusLine'] = {'type': 'command', 'command': '$cmd'}
-with open('$dst', 'w') as f:
-    json.dump(existing, f, indent=2)
-" 2>/dev/null
-      ok "Claude Settings -> merged statusLine (existing settings preserved)"
-    else
-      # Fallback: write template
-      local content
-      content=$(sed "s/__USERNAME__/$LOGNAME/g" "$src")
-      printf '%s\n' "$content" > "$dst"
-      ok "Claude Settings -> created from template (python3 not found for merge)"
-    fi
-  else
-    local content
-    content=$(cat "$src")
-    printf '%s\n' "$content" > "$dst"
-    ok "Claude Settings -> created (with statusLine)"
-  fi
-  install_count=$((install_count + 1))
-}
-
-merge_settings
 
 # ============================================================
 # Verify
@@ -297,7 +240,6 @@ if ! $DRY_RUN && [ "$install_count" -gt 0 ]; then
   verify "$NUSHELL_CONFIG_DST"
   verify "$NUSHELL_ENV_DST"
   verify "$STARSHIP_DST"
-  verify "$STATUSLINE_DST"
 fi
 
 # ============================================================

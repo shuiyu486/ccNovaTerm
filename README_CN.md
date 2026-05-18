@@ -85,7 +85,7 @@ cd ccNovaTerm
 | `-Force` / `--force` | 跳过确认 |
 | `-NoBackup` / `--no-backup` | 不备份现有配置 |
 
-`settings.json` 自动**合并**：只添加 `statusLine`，不覆盖你已有的 API key、模型设置。
+状态栏已独立为 [cc-statusline 插件](https://github.com/shuiyu486/terr-marketplace) — `/plugin install cc-statusline` 然后 `/cc-statusline:setup`。
 
 ## 快捷键
 
@@ -101,13 +101,11 @@ cd ccNovaTerm
 Nushell：键入 `y` 启动 Yazi，退出自动 cd。`cc` 是 `claude` 的快捷别名。
 
 <details>
-<summary><b>自定义 WezTerm / Starship / Statusline / 代理</b></summary>
+<summary><b>自定义 WezTerm / Starship / 代理</b></summary>
 
 **WezTerm** — Windows: `~\.wezterm.lua`，macOS: `~/.config/wezterm/wezterm.lua` — 改 `color_scheme`、`font_size`、`initial_cols`
 
 **Starship** `~\.config\starship.toml` — 参考[预设](https://starship.rs/presets/)
-
-**Statusline** `~\.claude\statusline.ps1` — 末尾 ANSI 颜色码：`"32m"` 绿 `"33m"` 黄 `"31m"` 红
 
 **代理** — Windows: `~\AppData\Roaming\nushell\env.nu`，macOS: `~/Library/Application Support/nushell/env.nu` — 取消注释 `load-env` 行
 
@@ -120,10 +118,8 @@ Nushell：键入 `y` 启动 Yazi，退出自动 cd。`cc` 是 `claude` 的快捷
   ~/.wezterm.lua  或  ~/.config/wezterm/wezterm.lua  （Win / Mac）
   nushell config.nu + env.nu                         （系统相关路径）
   ~/.config/starship.toml                            （双平台）
-  ~/.claude/statusline.ps1 + settings.json           （双平台）
 
 运行时:
-  ccNovaTerm-statusline-cache/ses-{PID}.txt             （临时目录，按窗口隔离）
   ccNovaTerm-backup/                                      （用户目录）
 ```
 

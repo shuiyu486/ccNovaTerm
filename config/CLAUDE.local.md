@@ -10,9 +10,9 @@
 
 ```
 .
-├── config/           ← 8 个配置模板（config-sync 管理）
+├── config/           ← 5 个配置模板（config-sync 管理）
 │   ├── .wezterm.lua, config.nu, env.nu, starship.toml
-│   ├── statusline.ps1, statusline-wrapper.sh, settings.json, CLAUDE.local.md
+│   └── CLAUDE.local.md
 ├── docs/             ← 截图（hero.png, install.png, statusline.png）
 ├── test/             ← test-install.ps1
 ├── install.ps1       ← Windows 安装脚本
@@ -55,7 +55,7 @@ config-sync 技能源码位于 `~/.claude/plugins/marketplaces/terr-marketplace/
 
 **测试安装脚本**：
 - `test/test-install.ps1` 验证本地配置是否正确
-- 安装脚本通过占位符替换生成：`__NU_PATH__`、`__GIT_USR_BIN__`、`__USERNAME__`
+- 安装脚本通过占位符替换生成：`__NU_PATH__`、`__GIT_USR_BIN__`
 
 **config-sync 的使用**：
 - 本目录已在 config-sync 的自动发现路径中（`$PWD.Path` 优先匹配）
@@ -63,7 +63,7 @@ config-sync 技能源码位于 `~/.claude/plugins/marketplaces/terr-marketplace/
 
 ## ccNovaTerm 兼容性约束
 
-以下 8 个文件受版本管理。编辑本地文件时遵循占位符规则，否则同步冲突。
+以下 5 个文件受版本管理。编辑本地文件时遵循占位符规则，否则同步冲突。
 
 ### .wezterm.lua → `~/.wezterm.lua`
 - `default_prog` 用跨平台检测块：`if wezterm.target_triple == 'x86_64-pc-windows-msvc'` 时值为 `'__NU_PATH__'`，否则 `'nu'`
@@ -83,18 +83,6 @@ config-sync 技能源码位于 `~/.claude/plugins/marketplaces/terr-marketplace/
 - 直接拷贝，无占位符。含 Nerd Font PUA 字符（`` `` `󰈙`）
 - **关键**：写入必须 UTF-8 无 BOM（`[System.IO.File]::WriteAllText`），禁用 PS 默认 GBK
 - 损坏症状：Nerd Font 字符变 `顐` `禲` `癩` 等 CJK 字符
-
-### settings.json → `~/.claude/settings.json`
-- 模板只含 `statusLine` 字段，command 使用 bash wrapper（不再直接调用 PowerShell）
-- 本地改其他字段（model、permissions、env）自由，同步自动过滤
-
-### statusline.ps1 → `~/.claude/statusline.ps1`
-- 直接拷贝，无占位符
-
-### statusline-wrapper.sh → `~/.claude/statusline-wrapper.sh`
-- 直接拷贝，无占位符
-- bash wrapper 脚本，解决 Windows 上 Claude Code 不关闭 stdin 管道导致 PowerShell 阻塞的问题
-- 用 `timeout 0.5 cat` 将 stdin 中转到临时文件，然后 PowerShell 从文件读取
 
 ### CLAUDE.local.md → `<项目根>/CLAUDE.local.md`
 - 直接拷贝，无占位符。本文件自身也受版本管理

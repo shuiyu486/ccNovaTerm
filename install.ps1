@@ -2,8 +2,8 @@
 .SYNOPSIS
     Claude Code Windows Terminal -- One-click install script
 .DESCRIPTION
-    Installs WezTerm + Nushell + Starship + Yazi + Claude Code Statusline config.
-    Includes Pastel Powerline prompt, token-tracked statusline, Yazi cd-on-exit.
+    Installs WezTerm + Nushell + Starship + Yazi terminal config.
+    Includes Pastel Powerline prompt and Yazi cd-on-exit.
 .PARAMETER Force
     Skip confirmation prompts
 .PARAMETER DryRun
@@ -84,7 +84,6 @@ function Write-FileUtf8NoBom([string]$Path, [string]$Content) {
 Write-Host "  ccNovaTerm" -ForegroundColor Cyan
 Write-Host "  Beautiful Terminal for Claude Code on Windows" -ForegroundColor Cyan
 Write-Host "  WezTerm + Nushell + Starship + Yazi" -ForegroundColor Gray
-
 if ($DryRun) {
     Write-Host "  *** DRY RUN mode - no files will be modified ***" -ForegroundColor Yellow
     Write-Host ""
@@ -288,18 +287,6 @@ $targets += @{
     Dst   = Join-Path $HomeDir ".config\starship.toml"
     Type  = "copy"
 }
-$targets += @{
-    Title = "Claude Statusline"
-    Src   = Join-Path $ConfigDir "statusline.ps1"
-    Dst   = Join-Path $HomeDir ".claude\statusline.ps1"
-    Type  = "copy"
-}
-$targets += @{
-    Title = "Claude Settings"
-    Src   = Join-Path $ConfigDir "settings.json"
-    Dst   = Join-Path $HomeDir ".claude\settings.json"
-    Type  = "merge"
-}
 
 # ============================================================
 # Backup
@@ -378,98 +365,6 @@ foreach ($t in $targets) {
             }
         }
     }
-    elseif ($t.Type -eq "merge") {
-        if ($DryRun) {
-            Write-Info ("Would merge statusLine into: " + $t.Dst)
-            continue
-        }
-
-        $statusLineCmd = "powershell -NoProfile -ExecutionPolicy Bypass -File " +
-            ($HomeDir -replace '\\', '/') + "/.claude/statusline.ps1"
-
-        $newStatusLine = @{
-            type    = "command"
-            command = $statusLineCmd
-        }
-
-        $dstDir = Split-Path -Parent $t.Dst
-        New-Item -ItemType Directory -Force $dstDir | Out-Null
-
-        if (Test-Path $t.Dst) {
-            try {
-                $raw = Get-Content $t.Dst -Raw -Encoding UTF8
-                if (-not $raw.Trim()) {
-                    # Empty file, treat as new
-                    $content = Get-Content $t.Src -Raw -Encoding UTF8
-                    $content = $content.Replace('__USERNAME__', $env:USERNAME)
-                    Write-FileUtf8NoBom $t.Dst $content
-                    Write-OK ($t.Title + " -> overwritten empty file")
-                    $installedCount++
-                    continue
-                }
-
-                $existing = $raw | ConvertFrom-Json
-
-                # Handle case where existing JSON is actually an array
-                if ($existing -is [array]) {
-                    Write-Warn ($t.Title + ": existing settings.json is an array, creating backup copy")
-                    $bakJson = Join-Path $BackupDir "settings.json.bak"
-                    Copy-Item $t.Dst $bakJson -Force
-                    # Write fresh from template
-                    $content = Get-Content $t.Src -Raw -Encoding UTF8
-                    $content = $content.Replace('__USERNAME__', $env:USERNAME)
-                    Write-FileUtf8NoBom $t.Dst $content
-                    Write-OK ($t.Title + " -> replaced (array detected, backup at " + $bakJson + ")")
-                    $installedCount++
-                    continue
-                }
-
-                # Merge statusLine into existing PSCustomObject
-                $existing | Add-Member -MemberType NoteProperty -Name "statusLine" -Value $newStatusLine -Force -EA SilentlyContinue
-
-                # ConvertTo-Json in PS5.1: -Depth needed for nested objects, but
-                # it escapes / as \/ which is valid JSON but ugly. Use a regex fix.
-                $merged = $existing | ConvertTo-Json -Depth 10
-                $merged = $merged -replace '\\/', '/'  # unescape forward slashes
-
-                Write-FileUtf8NoBom $t.Dst $merged
-                Write-OK ($t.Title + " -> merged statusLine (preserved existing settings)")
-                $installedCount++
-            } catch {
-                Write-Fail ($t.Title + " merge failed: " + $_.Exception.Message)
-                Write-Info "Creating backup and writing template instead..."
-                if (-not $NoBackup) {
-                    try {
-                        $bakJson = Join-Path $BackupDir "settings.json.parse-failed.bak"
-                        Copy-Item $t.Dst $bakJson -Force
-                        Write-Info ("Backup saved to: " + $bakJson)
-                    } catch {}
-                }
-                try {
-                    $content = Get-Content $t.Src -Raw -Encoding UTF8
-                    $content = $content.Replace('__USERNAME__', $env:USERNAME)
-                    Write-FileUtf8NoBom $t.Dst $content
-                    Write-OK ($t.Title + " -> written from template")
-                    $installedCount++
-                } catch {
-                    Write-Fail ($t.Title + ": cannot write: " + $_.Exception.Message)
-                    $failedCount++
-                }
-            }
-        } else {
-            # No existing settings.json, create from template
-            try {
-                $content = Get-Content $t.Src -Raw -Encoding UTF8
-                $content = $content.Replace('__USERNAME__', $env:USERNAME)
-                Write-FileUtf8NoBom $t.Dst $content
-                Write-OK ($t.Title + " -> created (with statusLine)")
-                $installedCount++
-            } catch {
-                Write-Fail ($t.Title + ": cannot create: " + $_.Exception.Message)
-                $failedCount++
-            }
-        }
-    }
 }
 
 # ============================================================
@@ -478,7 +373,6 @@ foreach ($t in $targets) {
 if (-not $DryRun -and $installedCount -gt 0) {
     Write-Step "Verifying installed files"
     foreach ($t in $targets) {
-        if ($t.Type -eq "merge") { continue }
         if (Test-Path $t.Dst) {
             $size = (Get-Item $t.Dst).Length
             if ($size -gt 10) {
@@ -518,7 +412,7 @@ Write-Host "Next steps:" -ForegroundColor Yellow
 Write-Host "  1. Restart WezTerm"
 Write-Host "  2. Verify font: wezterm ls-fonts --list-system"
 Write-Host "  3. Configure proxy in: $HomeDir\AppData\Roaming\nushell\env.nu"
-Write-Host "  4. Configure model/API key in: $HomeDir\.claude\settings.json"
+Write-Host "  4. Install status line: /plugin install cc-statusline && /cc-statusline:setup"
 
 if (-not $weztermFound) {
     Write-Host ""

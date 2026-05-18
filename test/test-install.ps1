@@ -52,9 +52,7 @@ TestCase "Fresh install, all software present" {
             (Join-Path $fakeHome ".wezterm.lua"),
             (Join-Path $fakeHome "AppData\Roaming\nushell\config.nu"),
             (Join-Path $fakeHome "AppData\Roaming\nushell\env.nu"),
-            (Join-Path $fakeHome ".config\starship.toml"),
-            (Join-Path $fakeHome ".claude\statusline.ps1"),
-            (Join-Path $fakeHome ".claude\settings.json")
+            (Join-Path $fakeHome ".config\starship.toml")
         )
         foreach ($f in $checks) {
             if (-not (Test-Path $f)) { throw "Missing: $f" }
@@ -74,10 +72,6 @@ TestCase "Fresh install, all software present" {
             Write-Host "    (INFO) GIT_USR_BIN placeholder kept as fallback (git not found)" -ForegroundColor Gray
         }
 
-        # Verify settings.json has statusLine
-        $s = Get-Content (Join-Path $fakeHome ".claude\settings.json") -Raw | ConvertFrom-Json
-        if (-not $s.statusLine) { throw "statusLine missing from settings.json" }
-        if ($s.statusLine.type -ne "command") { throw "statusLine.type should be 'command'" }
     } finally {
         $env:USERPROFILE = $origHome
     }
@@ -126,41 +120,7 @@ TestCase "Backup of existing configs" {
 }
 
 # ============================================================
-# Test 3: settings.json merge preserves existing keys
-# ============================================================
-TestCase "settings.json merge preserves existing keys" {
-    $fakeHome = Join-Path $TestRoot "t3-merge"
-    New-Item -ItemType Directory $fakeHome -Force | Out-Null
-
-    $origHome = $env:USERPROFILE
-    try {
-        $env:USERPROFILE = $fakeHome
-
-        $claudeDir = Join-Path $fakeHome ".claude"
-        New-Item -ItemType Directory $claudeDir -Force | Out-Null
-
-        # Create existing settings with custom fields
-        $existing = @{
-            env = @{ ANTHROPIC_BASE_URL = "https://api.example.com" }
-            permissions = @{ defaultMode = "default" }
-            language = "en"
-        }
-        Set-Content (Join-Path $claudeDir "settings.json") ($existing | ConvertTo-Json) -Encoding UTF8
-
-        & $ScriptUnderTest -Force -NoFont 2>&1 | Out-Null
-
-        $result = Get-Content (Join-Path $claudeDir "settings.json") -Raw -Encoding UTF8 | ConvertFrom-Json
-        if (-not $result.statusLine) { throw "statusLine missing after merge" }
-        if ($result.language -ne "en") { throw "language overwritten!" }
-        if (-not $result.env.ANTHROPIC_BASE_URL) { throw "env.ANTHROPIC_BASE_URL lost!" }
-        Write-Host "    (INFO) Existing keys preserved: language=$($result.language), env present: $($result.env -ne $null)" -ForegroundColor Gray
-    } finally {
-        $env:USERPROFILE = $origHome
-    }
-}
-
-# ============================================================
-# Test 4: NoBackup flag
+# Test 3: NoBackup flag
 # ============================================================
 TestCase "NoBackup flag skips backup" {
     $fakeHome = Join-Path $TestRoot "t4-nobackup"
@@ -260,33 +220,7 @@ TestCase "Graceful error when config/ is missing" {
 }
 
 # ============================================================
-# Test 8: Empty existing settings.json handled
-# ============================================================
-TestCase "Empty settings.json treated as new" {
-    $fakeHome = Join-Path $TestRoot "t8-emptyjson"
-    New-Item -ItemType Directory $fakeHome -Force | Out-Null
-
-    $origHome = $env:USERPROFILE
-    try {
-        $env:USERPROFILE = $fakeHome
-
-        $claudeDir = Join-Path $fakeHome ".claude"
-        New-Item -ItemType Directory $claudeDir -Force | Out-Null
-        # Create empty file
-        Set-Content (Join-Path $claudeDir "settings.json") "   " -Encoding UTF8
-
-        & $ScriptUnderTest -Force -NoFont 2>&1 | Out-Null
-
-        $result = Get-Content (Join-Path $claudeDir "settings.json") -Raw -Encoding UTF8 | ConvertFrom-Json
-        if (-not $result.statusLine) { throw "statusLine missing" }
-        Write-Host "    (INFO) Empty settings.json replaced correctly" -ForegroundColor Gray
-    } finally {
-        $env:USERPROFILE = $origHome
-    }
-}
-
-# ============================================================
-# Test 9: All config files have valid syntax (smoke test)
+# Test 8: All config files have valid syntax (smoke test)
 # ============================================================
 TestCase "Config files have valid syntax" {
     $fakeHome = Join-Path $TestRoot "t9-syntax"
@@ -315,11 +249,6 @@ TestCase "Config files have valid syntax" {
         $c = Get-Content (Join-Path $fakeHome "AppData\Roaming\nushell\config.nu") -Raw -Encoding UTF8
         if ($c -notmatch "def.*env.*y") { throw "config.nu missing yazi function" }
 
-        # Statusline: PS syntax check
-        $ps = Get-Content (Join-Path $fakeHome ".claude\statusline.ps1") -Raw -Encoding UTF8
-        if ($ps -notmatch "ConvertFrom-Json") { throw "statusline.ps1 missing JSON parsing" }
-        if ($ps -notmatch "fmtW") { throw "statusline.ps1 missing fmtW function" }
-
         Write-Host "    (INFO) All config files pass syntax smoke test" -ForegroundColor Gray
     } finally {
         $env:USERPROFILE = $origHome
@@ -341,16 +270,12 @@ TestCase "Home path with spaces and special chars" {
         # Check all files were created despite spaces in path
         $checks = @(
             (Join-Path $fakeHome ".wezterm.lua"),
-            (Join-Path $fakeHome "AppData\Roaming\nushell\config.nu"),
-            (Join-Path $fakeHome ".claude\settings.json")
+            (Join-Path $fakeHome "AppData\Roaming\nushell\config.nu")
         )
         foreach ($f in $checks) {
             if (-not (Test-Path $f)) { throw "Missing file with space-path: $f" }
         }
 
-        # Verify settings.json command path handles spaces correctly
-        $s = Get-Content (Join-Path $fakeHome ".claude\settings.json") -Raw -Encoding UTF8 | ConvertFrom-Json
-        Write-Host "    (INFO) statusLine.command = $($s.statusLine.command)" -ForegroundColor Gray
         Write-Host "    (INFO) Handles special characters in path" -ForegroundColor Gray
     } finally {
         $env:USERPROFILE = $origHome
