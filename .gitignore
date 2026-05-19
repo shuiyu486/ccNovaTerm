@@ -1,6 +1,9 @@
 # Backup files
 claude-terminal-backup/
 
+# Claude Code local
+.claude/
+
 # OS
 Thumbs.db
 Desktop.ini
