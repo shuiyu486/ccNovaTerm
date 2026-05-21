@@ -39,6 +39,16 @@ config.keys = {
   -- Claude Code: Ctrl+Q sends 20×Ctrl+U (handles multi-line), Ctrl+Z sends Ctrl+Y (yank restore)
   { key = 'q', mods = 'CTRL', action = wezterm.action.SendString '\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15\x15' },
   { key = 'z', mods = 'CTRL', action = wezterm.action.SendKey { key = 'y', mods = 'CTRL' } },
+  -- Alt+数字键 切换标签页（0-indexed：Alt+1=第1个标签）
+  { key = '1', mods = 'ALT', action = wezterm.action.ActivateTab(0) },
+  { key = '2', mods = 'ALT', action = wezterm.action.ActivateTab(1) },
+  { key = '3', mods = 'ALT', action = wezterm.action.ActivateTab(2) },
+  { key = '4', mods = 'ALT', action = wezterm.action.ActivateTab(3) },
+  { key = '5', mods = 'ALT', action = wezterm.action.ActivateTab(4) },
+  { key = '6', mods = 'ALT', action = wezterm.action.ActivateTab(5) },
+  { key = '7', mods = 'ALT', action = wezterm.action.ActivateTab(6) },
+  { key = '8', mods = 'ALT', action = wezterm.action.ActivateTab(7) },
+  { key = '9', mods = 'ALT', action = wezterm.action.ActivateTab(8) },
 }
 
 config.hyperlink_rules = wezterm.default_hyperlink_rules()
