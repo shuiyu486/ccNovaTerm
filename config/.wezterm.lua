@@ -36,6 +36,9 @@ config.keys = {
   { key = 'x', mods = 'ALT', action = wezterm.action.CloseCurrentPane { confirm = true } },
   { key = 'h', mods = 'ALT', action = wezterm.action.Hide },
   { key = 'Enter', mods = 'SHIFT', action = wezterm.action.SendString '\x1b[13;2u' },
+  -- Claude Code: Ctrl+Q → Ctrl+U (kill/cut all), Ctrl+Z → Ctrl+Y (yank/restore)
+  { key = 'q', mods = 'CTRL', action = wezterm.action.SendKey { key = 'u', mods = 'CTRL' } },
+  { key = 'z', mods = 'CTRL', action = wezterm.action.SendKey { key = 'y', mods = 'CTRL' } },
 }
 
 config.hyperlink_rules = wezterm.default_hyperlink_rules()
