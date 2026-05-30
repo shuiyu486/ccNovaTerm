@@ -70,10 +70,8 @@ TestCase "Fresh install, all software present" {
 
         # Verify placeholder replacement in env.nu
         $e = Get-Content (Join-Path $fakeHome "AppData\Roaming\nushell\env.nu") -Raw
-        if ($e -match '__GIT_USR_BIN__') {
-            # This is OK if git was not found (placeholder kept as fallback)
-            Write-Host "    (INFO) GIT_USR_BIN placeholder kept as fallback (git not found)" -ForegroundColor Gray
-        }
+        if ($e -match '__GIT_USR_BIN__') { throw "GIT_USR_BIN placeholder not replaced" }
+        if ($e -notmatch 'file\.exe') { throw "env.nu missing concrete file.exe path" }
 
     } finally {
         $env:USERPROFILE = $origHome

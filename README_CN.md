@@ -35,13 +35,17 @@
 ### Windows
 
 ```powershell
-irm https://raw.githubusercontent.com/shuiyu486/ccNovaTerm/main/install.ps1 | iex
+git clone https://github.com/shuiyu486/ccNovaTerm.git
+cd ccNovaTerm
+.\install.ps1
 ```
 
 ### macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/shuiyu486/ccNovaTerm/main/install.sh | bash
+git clone https://github.com/shuiyu486/ccNovaTerm.git
+cd ccNovaTerm
+./install.sh
 ```
 
 安装脚本会：
@@ -104,9 +108,9 @@ ccNovaTerm 包含一个 [Claude Code 技能](https://docs.anthropic.com/en/docs/
 所有配置文件都是标准的，可以直接编辑：
 
 - **WezTerm**：编辑 `~/.wezterm.lua` — 字体、颜色、快捷键
-- **Nushell**：编辑 `~/AppData/Roaming/nushell/config.nu`（Windows）或 `~/.config/nushell/config.nu`（macOS）
+- **Nushell**：编辑 `~/AppData/Roaming/nushell/config.nu`（Windows）或 `~/Library/Application Support/nushell/config.nu`（macOS）
 - **Starship**：编辑 `~/.config/starship.toml` — 提示符样式和模块
-- **环境变量**：编辑 `~/AppData/Roaming/nushell/env.nu`（Windows）或 `~/.config/nushell/env.nu`（macOS）
+- **环境变量**：编辑 `~/AppData/Roaming/nushell/env.nu`（Windows）或 `~/Library/Application Support/nushell/env.nu`（macOS）
 - **Yazi**：编辑 `~/AppData/Roaming/yazi/config/*.toml`（Windows）或 `~/.config/yazi/*.toml`（macOS）；插件依赖记录在 `package.toml`，可用 `ya pkg install` 恢复
 
 修改后，使用 config-sync 的"同步到项目"将更改推回模板。

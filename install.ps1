@@ -362,10 +362,12 @@ foreach ($t in $targets) {
             $content = $content.Replace('__NU_PATH__', $weztermNuPath)
         }
         if ($t.Dst -match 'env\.nu$') {
+            $content = $content.Replace('__GIT_USR_BIN__\file.exe', $fileExeNushell)
             if ($gitUsrBin) {
                 $content = $content.Replace('__GIT_USR_BIN__', ($gitUsrBin -replace '\\', '\\'))
+            } else {
+                $content = $content.Replace('__GIT_USR_BIN__', 'C:\\Program Files\\Git\\usr\\bin')
             }
-            # If git not found, keep the default placeholder path (C:\Program Files\Git\usr\bin)
         }
 
         if ($DryRun) {

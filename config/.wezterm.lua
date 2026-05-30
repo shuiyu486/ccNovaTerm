@@ -1,4 +1,4 @@
-﻿local wezterm = require 'wezterm'
+local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
 -- Auto-detect nushell path per OS (placeholder replaced by installer on Windows)

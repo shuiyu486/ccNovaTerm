@@ -206,13 +206,21 @@ copy_config() {
     git_bin=$(dirname "$(which git)" 2>/dev/null || echo "/usr")
     # On macOS, file is at /usr/bin/file or /opt/homebrew/opt/coreutils/libexec/gnubin/file
     local file_dir=""
+    local file_path=""
     if [ -f "/opt/homebrew/opt/coreutils/libexec/gnubin/file" ]; then
       file_dir="/opt/homebrew/opt/coreutils/libexec/gnubin"
+      file_path="$file_dir/file"
     elif [ -f "/usr/local/opt/coreutils/libexec/gnubin/file" ]; then
       file_dir="/usr/local/opt/coreutils/libexec/gnubin"
+      file_path="$file_dir/file"
+    elif [ -f "/usr/bin/file" ]; then
+      file_dir="/usr/bin"
+      file_path="/usr/bin/file"
     else
       file_dir="$git_bin"
+      file_path="$file_dir/file"
     fi
+    content="${content//__GIT_USR_BIN__\\\\file.exe/$file_path}"
     content="${content//__GIT_USR_BIN__/$file_dir}"
   fi
 

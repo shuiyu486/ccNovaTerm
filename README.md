@@ -35,13 +35,17 @@ An automated setup that bundles [WezTerm](https://wezfurlong.org/wezterm/) + [Nu
 ### Windows
 
 ```powershell
-irm https://raw.githubusercontent.com/shuiyu486/ccNovaTerm/main/install.ps1 | iex
+git clone https://github.com/shuiyu486/ccNovaTerm.git
+cd ccNovaTerm
+.\install.ps1
 ```
 
 ### macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/shuiyu486/ccNovaTerm/main/install.sh | bash
+git clone https://github.com/shuiyu486/ccNovaTerm.git
+cd ccNovaTerm
+./install.sh
 ```
 
 The installer will:
@@ -104,9 +108,9 @@ Templates use placeholders that are auto-replaced with actual system paths durin
 All config files are standard and can be edited directly:
 
 - **WezTerm**: Edit `~/.wezterm.lua` — font, colors, keybindings
-- **Nushell**: Edit `~/AppData/Roaming/nushell/config.nu` (Windows) or `~/.config/nushell/config.nu` (macOS)
+- **Nushell**: Edit `~/AppData/Roaming/nushell/config.nu` (Windows) or `~/Library/Application Support/nushell/config.nu` (macOS)
 - **Starship**: Edit `~/.config/starship.toml` — prompt style and modules
-- **Environment**: Edit `~/AppData/Roaming/nushell/env.nu` (Windows) or `~/.config/nushell/env.nu` (macOS)
+- **Environment**: Edit `~/AppData/Roaming/nushell/env.nu` (Windows) or `~/Library/Application Support/nushell/env.nu` (macOS)
 - **Yazi**: Edit `~/AppData/Roaming/yazi/config/*.toml` (Windows) or `~/.config/yazi/*.toml` (macOS); plugin dependencies are locked in `package.toml` and restored with `ya pkg install`
 
 After changes, use config-sync's "Sync to project" to push them back to templates.
