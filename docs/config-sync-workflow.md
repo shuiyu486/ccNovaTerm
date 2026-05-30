@@ -4,8 +4,9 @@
 
 ```
 .
-├── config/           ← 5 个配置模板（config-sync 管理）
+├── config/           ← 配置模板（config-sync 管理）
 │   ├── .wezterm.lua, config.nu, env.nu, starship.toml
+│   ├── yazi/         ← yazi.toml, keymap.toml, package.toml
 │   └── CLAUDE.local.md
 ├── docs/             ← 截图 + 参考文档
 ├── test/             ← test-install.ps1

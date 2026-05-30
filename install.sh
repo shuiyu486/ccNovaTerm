@@ -130,6 +130,10 @@ NUSHELL_DIR="$HOME_DIR/Library/Application Support/nushell"
 NUSHELL_CONFIG_DST="$NUSHELL_DIR/config.nu"
 NUSHELL_ENV_DST="$NUSHELL_DIR/env.nu"
 STARSHIP_DST="$HOME_DIR/.config/starship.toml"
+YAZI_DIR="$HOME_DIR/.config/yazi"
+YAZI_CONFIG_DST="$YAZI_DIR/yazi.toml"
+YAZI_KEYMAP_DST="$YAZI_DIR/keymap.toml"
+YAZI_PACKAGE_DST="$YAZI_DIR/package.toml"
 
 # ============================================================
 # Backup
@@ -149,6 +153,9 @@ if ! $NO_BACKUP && ! $DRY_RUN; then
   backup_file "$NUSHELL_CONFIG_DST"
   backup_file "$NUSHELL_ENV_DST"
   backup_file "$STARSHIP_DST"
+  backup_file "$YAZI_CONFIG_DST"
+  backup_file "$YAZI_KEYMAP_DST"
+  backup_file "$YAZI_PACKAGE_DST"
   if ! $has_backup; then
     info "No existing configs to backup"
   fi
@@ -215,10 +222,28 @@ copy_config() {
 }
 
 # Copy configs
-copy_config ".wezterm.lua"   "$WEZTERM_DST"
-copy_config "config.nu"       "$NUSHELL_CONFIG_DST"
-copy_config "env.nu"          "$NUSHELL_ENV_DST"
-copy_config "starship.toml"   "$STARSHIP_DST"
+copy_config ".wezterm.lua"        "$WEZTERM_DST"
+copy_config "config.nu"            "$NUSHELL_CONFIG_DST"
+copy_config "env.nu"               "$NUSHELL_ENV_DST"
+copy_config "starship.toml"        "$STARSHIP_DST"
+copy_config "yazi/yazi.toml"       "$YAZI_CONFIG_DST"
+copy_config "yazi/keymap.toml"     "$YAZI_KEYMAP_DST"
+copy_config "yazi/package.toml"    "$YAZI_PACKAGE_DST"
+
+if check_cmd ya; then
+  if $DRY_RUN; then
+    info "Would install Yazi plugins from package.toml: ya pkg install"
+  else
+    step "Installing Yazi plugins"
+    if YAZI_CONFIG_HOME="$YAZI_DIR" ya pkg install; then
+      ok "Yazi plugins installed from package.toml"
+    else
+      warn "ya pkg install failed. Run it manually after install."
+    fi
+  fi
+else
+  warn "ya command not found. After installing Yazi, run: ya pkg install"
+fi
 
 # ============================================================
 # Verify
@@ -240,6 +265,9 @@ if ! $DRY_RUN && [ "$install_count" -gt 0 ]; then
   verify "$NUSHELL_CONFIG_DST"
   verify "$NUSHELL_ENV_DST"
   verify "$STARSHIP_DST"
+  verify "$YAZI_CONFIG_DST"
+  verify "$YAZI_KEYMAP_DST"
+  verify "$YAZI_PACKAGE_DST"
 fi
 
 # ============================================================
@@ -265,7 +293,8 @@ echo -e "${YLW}Next steps:${RST}"
 echo "  1. Restart WezTerm"
 echo "  2. Verify font: wezterm ls-fonts --list-system | grep JetBrainsMono"
 echo "  3. Configure proxy in: $NUSHELL_ENV_DST"
-echo "  4. Configure model/API key in: $SETTINGS_DST"
+echo "  4. If Yazi plugins were skipped, run: ya pkg install"
+echo "  5. Configure model/API key if needed"
 
 if ! check_cmd wezterm; then
   echo ""

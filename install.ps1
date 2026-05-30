@@ -287,6 +287,24 @@ $targets += @{
     Dst   = Join-Path $HomeDir ".config\starship.toml"
     Type  = "copy"
 }
+$targets += @{
+    Title = "Yazi config"
+    Src   = Join-Path $ConfigDir "yazi\yazi.toml"
+    Dst   = Join-Path $HomeDir "AppData\Roaming\yazi\config\yazi.toml"
+    Type  = "copy"
+}
+$targets += @{
+    Title = "Yazi keymap"
+    Src   = Join-Path $ConfigDir "yazi\keymap.toml"
+    Dst   = Join-Path $HomeDir "AppData\Roaming\yazi\config\keymap.toml"
+    Type  = "copy"
+}
+$targets += @{
+    Title = "Yazi packages"
+    Src   = Join-Path $ConfigDir "yazi\package.toml"
+    Dst   = Join-Path $HomeDir "AppData\Roaming\yazi\config\package.toml"
+    Type  = "copy"
+}
 
 # ============================================================
 # Backup
@@ -367,6 +385,30 @@ foreach ($t in $targets) {
     }
 }
 
+if ($yaziFound) {
+    if ($DryRun) {
+        Write-Info "Would install Yazi plugins from package.toml: ya pkg install"
+    } else {
+        Write-Step "Installing Yazi plugins"
+        try {
+            $oldYaziConfigHome = $env:YAZI_CONFIG_HOME
+            $env:YAZI_CONFIG_HOME = Join-Path $HomeDir "AppData\Roaming\yazi\config"
+            ya pkg install
+            if ($LASTEXITCODE -eq 0) {
+                Write-OK "Yazi plugins installed from package.toml"
+            } else {
+                Write-Warn "ya pkg install exited with a non-zero status. Run it manually after install."
+            }
+        } catch {
+            Write-Warn ("Cannot run ya pkg install: " + $_.Exception.Message)
+        } finally {
+            $env:YAZI_CONFIG_HOME = $oldYaziConfigHome
+        }
+    }
+} else {
+    Write-Warn "Yazi not found. After installing Yazi, run: ya pkg install"
+}
+
 # ============================================================
 # Verify
 # ============================================================
@@ -412,7 +454,8 @@ Write-Host "Next steps:" -ForegroundColor Yellow
 Write-Host "  1. Restart WezTerm"
 Write-Host "  2. Verify font: wezterm ls-fonts --list-system"
 Write-Host "  3. Configure proxy in: $HomeDir\AppData\Roaming\nushell\env.nu"
-Write-Host "  4. Install status line: /plugin install cc-statusline && /cc-statusline:setup"
+Write-Host "  4. If Yazi plugins were skipped, run: ya pkg install"
+Write-Host "  5. Install status line: /plugin install cc-statusline && /cc-statusline:setup"
 
 if (-not $weztermFound) {
     Write-Host ""

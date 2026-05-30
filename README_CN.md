@@ -48,7 +48,8 @@ curl -fsSL https://raw.githubusercontent.com/shuiyu486/ccNovaTerm/main/install.s
 1. 检测所有前置依赖
 2. 用系统路径替换配置模板中的占位符
 3. 将配置文件部署到正确位置
-4. 备份已有配置
+4. 安装 `package.toml` 中锁定的 Yazi 插件
+5. 备份已有配置
 
 ## 📁 项目结构
 
@@ -59,6 +60,7 @@ ccNovaTerm/
 │   ├── config.nu     ← Nushell 配置（别名、Yazi 集成）
 │   ├── env.nu        ← Nushell 环境变量
 │   ├── starship.toml ← Starship 提示符（Pastel Powerline）
+│   ├── yazi/         ← Yazi 配置与插件锁定文件
 │   └── CLAUDE.local.md ← 项目级 Claude Code 指令
 ├── docs/             ← 截图
 ├── test/             ← 测试脚本
@@ -105,6 +107,7 @@ ccNovaTerm 包含一个 [Claude Code 技能](https://docs.anthropic.com/en/docs/
 - **Nushell**：编辑 `~/AppData/Roaming/nushell/config.nu`（Windows）或 `~/.config/nushell/config.nu`（macOS）
 - **Starship**：编辑 `~/.config/starship.toml` — 提示符样式和模块
 - **环境变量**：编辑 `~/AppData/Roaming/nushell/env.nu`（Windows）或 `~/.config/nushell/env.nu`（macOS）
+- **Yazi**：编辑 `~/AppData/Roaming/yazi/config/*.toml`（Windows）或 `~/.config/yazi/*.toml`（macOS）；插件依赖记录在 `package.toml`，可用 `ya pkg install` 恢复
 
 修改后，使用 config-sync 的"同步到项目"将更改推回模板。
 

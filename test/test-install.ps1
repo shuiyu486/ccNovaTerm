@@ -47,12 +47,15 @@ TestCase "Fresh install, all software present" {
         $env:USERPROFILE = $fakeHome
         $output = & $ScriptUnderTest -Force -NoFont 2>&1 | Out-String
 
-        # Verify all 5 config files + merged settings were created
+        # Verify all config files were created
         $checks = @(
             (Join-Path $fakeHome ".wezterm.lua"),
             (Join-Path $fakeHome "AppData\Roaming\nushell\config.nu"),
             (Join-Path $fakeHome "AppData\Roaming\nushell\env.nu"),
-            (Join-Path $fakeHome ".config\starship.toml")
+            (Join-Path $fakeHome ".config\starship.toml"),
+            (Join-Path $fakeHome "AppData\Roaming\yazi\config\yazi.toml"),
+            (Join-Path $fakeHome "AppData\Roaming\yazi\config\keymap.toml"),
+            (Join-Path $fakeHome "AppData\Roaming\yazi\config\package.toml")
         )
         foreach ($f in $checks) {
             if (-not (Test-Path $f)) { throw "Missing: $f" }
@@ -248,6 +251,12 @@ TestCase "Config files have valid syntax" {
         # Nushell config: check y function
         $c = Get-Content (Join-Path $fakeHome "AppData\Roaming\nushell\config.nu") -Raw -Encoding UTF8
         if ($c -notmatch "def.*env.*y") { throw "config.nu missing yazi function" }
+
+        # Yazi config: check preview shortcut and package lock
+        $yk = Get-Content (Join-Path $fakeHome "AppData\Roaming\yazi\config\keymap.toml") -Raw -Encoding UTF8
+        if ($yk -notmatch "toggle-pane max-preview") { throw "keymap.toml missing toggle-pane preview shortcut" }
+        $yp = Get-Content (Join-Path $fakeHome "AppData\Roaming\yazi\config\package.toml") -Raw -Encoding UTF8
+        if ($yp -notmatch "yazi-rs/plugins:toggle-pane") { throw "package.toml missing toggle-pane dependency" }
 
         Write-Host "    (INFO) All config files pass syntax smoke test" -ForegroundColor Gray
     } finally {

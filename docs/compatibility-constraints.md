@@ -1,6 +1,6 @@
 # ccNovaTerm 兼容性约束
 
-以下 5 个文件受版本管理。编辑本地文件时遵循占位符规则，否则同步冲突。
+以下配置文件受版本管理。编辑本地文件时遵循占位符规则，否则同步冲突。
 
 ## .wezterm.lua → `~/.wezterm.lua`
 
@@ -30,3 +30,10 @@
 - 直接拷贝，无占位符。本文件自身也受版本管理
 - 内容应通用化：不使用绝对路径，使用 `~` 表示 home 目录
 - 修改后同步到 `config/CLAUDE.local.md`，其他人 clone 项目后可 `pull` 获得
+
+## Yazi → `~/AppData/Roaming/yazi/config/*.toml` 或 `~/.config/yazi/*.toml`
+
+- 模板位于 `config/yazi/`：`yazi.toml`、`keymap.toml`、`package.toml`
+- `keymap.toml` 可引用插件命令；对应插件依赖必须同时记录在 `package.toml`
+- 其它电脑部署后运行 `ya pkg install`，按 `package.toml` 锁定版本恢复插件
+- `Enter` 当前绑定为 `plugin toggle-pane max-preview`，会覆盖 Yazi 默认打开/进入；使用 `l` 或 `→` 进入目录/打开文件

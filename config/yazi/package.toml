@@ -1,0 +1,7 @@
+[[plugin.deps]]
+use = "yazi-rs/plugins:toggle-pane"
+rev = "c2c16c8"
+hash = "77c0dd89349f367282c5ea1999754915"
+
+[flavor]
+deps = []

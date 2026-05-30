@@ -48,7 +48,8 @@ The installer will:
 1. Detect all prerequisites
 2. Replace placeholders in config templates with actual system paths
 3. Deploy config files to the correct locations
-4. Back up any existing configs
+4. Install locked Yazi plugins from `package.toml`
+5. Back up any existing configs
 
 ## 📁 Project Structure
 
@@ -59,6 +60,7 @@ ccNovaTerm/
 │   ├── config.nu     ← Nushell config (aliases, Yazi integration)
 │   ├── env.nu        ← Nushell environment variables
 │   ├── starship.toml ← Starship prompt (Pastel Powerline)
+│   ├── yazi/         ← Yazi config and plugin lockfile
 │   └── CLAUDE.local.md ← Project-level Claude Code instructions
 ├── docs/             ← Screenshots
 ├── test/             ← Test scripts
@@ -105,6 +107,7 @@ All config files are standard and can be edited directly:
 - **Nushell**: Edit `~/AppData/Roaming/nushell/config.nu` (Windows) or `~/.config/nushell/config.nu` (macOS)
 - **Starship**: Edit `~/.config/starship.toml` — prompt style and modules
 - **Environment**: Edit `~/AppData/Roaming/nushell/env.nu` (Windows) or `~/.config/nushell/env.nu` (macOS)
+- **Yazi**: Edit `~/AppData/Roaming/yazi/config/*.toml` (Windows) or `~/.config/yazi/*.toml` (macOS); plugin dependencies are locked in `package.toml` and restored with `ya pkg install`
 
 After changes, use config-sync's "Sync to project" to push them back to templates.
 

@@ -1,0 +1,6 @@
+[mgr]
+ratio = [0, 2, 8]
+
+[preview]
+wrap = "yes"
+tab_size = 2
