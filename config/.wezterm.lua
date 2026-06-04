@@ -1,12 +1,8 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
--- Auto-detect nushell path per OS (placeholder replaced by installer on Windows)
-if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
-  config.default_prog = { '__NU_PATH__' }
-else
-  config.default_prog = { 'nu' }
-end
+-- Placeholder is replaced by the installer with an absolute Nushell path.
+config.default_prog = { '__NU_PATH__' }
 config.font = wezterm.font 'JetBrainsMono Nerd Font'
 config.font_size = 11
 config.color_scheme = 'Catppuccin Mocha'

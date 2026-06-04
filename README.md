@@ -48,12 +48,40 @@ cd ccNovaTerm
 ./install.sh
 ```
 
-The installer will:
-1. Detect all prerequisites
+The macOS installer automatically installs the core terminal stack and deploys configs, including Homebrew, WezTerm, JetBrainsMono Nerd Font, Nushell, Starship, Yazi, Node.js, and Claude Code. Nushell, Yazi, and Node.js are installed from official upstream release archives, and Starship is installed with the official prebuilt installer; these tools go into `~/.local/bin` instead of Homebrew, which avoids heavy LLVM/Rust builds on older systems such as macOS 12 Monterey. Do not run the installer with `sudo`; it installs user config files and should target your own home directory. If the shell reports a permission error, run `chmod +x install.sh` first.
+
+Advanced options:
+
+| Command | Purpose |
+|---------|---------|
+| `./install.sh --dry-run` | Preview dependencies and config files without modifying the system |
+| `./install.sh --force` | Skip ccNovaTerm confirmation prompts for automation |
+| `./install.sh --skip-deps` | Copy config files without installing dependencies |
+| `./install.sh --no-font` | Skip Nerd Font detection and installation |
+
+Common macOS cases:
+
+| Output | Meaning | Fix |
+|--------|---------|-----|
+| `This installer is macOS only` | `install.sh` was run on a non-macOS host | Use `install.ps1` on Windows, or run `install.sh` from macOS |
+| `sudo: ./install.sh: command not found` or `permission denied` | The script is not executable, or it was run with `sudo` | Run `chmod +x install.sh`, then run `./install.sh` directly |
+| `[X] WezTerm/Nushell/... -- not found` | The installer detected missing dependencies | Continue when prompted; the script will install missing dependencies automatically |
+| `Nushell -- not found` | Nushell is missing | Continue when prompted; the script installs Nushell from the official GitHub release into `~/.local/bin` |
+| `Starship -- not found` | Starship is missing | Continue when prompted; the script installs Starship from the official prebuilt installer into `~/.local/bin` |
+| `Yazi -- not found` | Yazi is missing | Continue when prompted; the script installs Yazi from the official GitHub release into `~/.local/bin` |
+| `Node.js/npm -- not found` | Node.js or npm is missing | Continue when prompted; the script installs the latest Node.js LTS release into `~/.local/bin` |
+| `Homebrew not found` | Homebrew is not installed | The script normally runs the official Homebrew installer, which may ask for your macOS password; you can also install Homebrew manually and rerun |
+| `Dependency installation did not complete` | A dependency install failed | Check the failed package above, fix it, then rerun `./install.sh` |
+| `ya command not found` | Yazi is unavailable, so plugins were not restored | Rerun `./install.sh`; for manual plugin restore, run `YAZI_CONFIG_HOME="$HOME/.config/yazi" ya pkg install` |
+| `Config files installed; required software is still missing` | `--skip-deps` was used to copy configs only | Rerun `./install.sh` to install and verify dependencies |
+
+The default macOS installer will:
+1. Detect and install missing dependencies
 2. Replace placeholders in config templates with actual system paths
-3. Deploy config files to the correct locations
-4. Install locked Yazi plugins from `package.toml`
-5. Back up any existing configs
+3. Back up any existing configs
+4. Deploy config files to the correct locations
+5. Install Nushell, Starship, Yazi, and Node.js into `~/.local/bin` from prebuilt upstream releases
+6. Restore Yazi plugins from `package.toml`
 
 ## 📁 Project Structure
 
@@ -100,7 +128,7 @@ Templates use placeholders that are auto-replaced with actual system paths durin
 
 | Placeholder | Replaced with |
 |-------------|--------------|
-| `__NU_PATH__` | Full path to Nushell executable (Windows) or `'nu'` (macOS) |
+| `__NU_PATH__` | Full path to Nushell executable |
 | `__GIT_USR_BIN__` | `usr/bin` path under Git install directory |
 
 ## 🛠️ Customization

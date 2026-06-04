@@ -1,4 +1,5 @@
 # Starship prompt
+$env.PATH = ($env.PATH | prepend "__LOCAL_BIN__")
 $env.STARSHIP_SHELL = "nu"
 $env.PROMPT_COMMAND = { || starship prompt --cmd-duration $env.CMD_DURATION_MS }
 $env.PROMPT_COMMAND_RIGHT = ""

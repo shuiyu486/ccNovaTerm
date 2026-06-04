@@ -22,7 +22,7 @@
 
 | 工具 | 说明 |
 |------|------|
-| [WezTerm](https://wezfurlong.org/weizterm/) | GPU 加速终端模拟器 |
+| [WezTerm](https://wezfurlong.org/wezterm/) | GPU 加速终端模拟器 |
 | [Nushell](https://www.nushell.sh/) | 结构化 Shell |
 | [Starship](https://starship.rs/) | 可定制的 Shell 提示符 |
 | [Yazi](https://yazi-rs.github.io/) | 终端文件管理器 |
@@ -48,12 +48,40 @@ cd ccNovaTerm
 ./install.sh
 ```
 
-安装脚本会：
-1. 检测所有前置依赖
+macOS 脚本会自动安装核心终端环境并部署配置，包括 Homebrew、WezTerm、JetBrainsMono Nerd Font、Nushell、Starship、Yazi、Node.js 和 Claude Code。Nushell、Yazi 和 Node.js 会从官方上游 release 安装，Starship 会通过官方预编译安装脚本安装；这些工具都放到 `~/.local/bin`，不再走 Homebrew，从而避开旧系统（例如 macOS 12 Monterey）上的 LLVM/Rust 重型构建。不要使用 `sudo` 运行安装脚本；它会把用户配置安装到 root 环境。若 shell 提示没有执行权限，先运行 `chmod +x install.sh`。
+
+高级用法：
+
+| 命令 | 用途 |
+|------|------|
+| `./install.sh --dry-run` | 预览会安装哪些依赖、会写入哪些配置，不修改系统 |
+| `./install.sh --force` | 跳过 ccNovaTerm 的确认提示，适合自动化环境 |
+| `./install.sh --skip-deps` | 不安装依赖，只复制配置文件 |
+| `./install.sh --no-font` | 跳过 Nerd Font 检测和安装 |
+
+macOS 常见情况：
+
+| 输出 | 含义 | 处理 |
+|------|------|------|
+| `This installer is macOS only` | 在非 macOS 环境运行了 `install.sh` | Windows 使用 `install.ps1`，macOS 使用 `install.sh` |
+| `sudo: ./install.sh: command not found` 或 `permission denied` | 脚本没有执行权限，或使用了 `sudo` | 运行 `chmod +x install.sh`，然后直接执行 `./install.sh` |
+| `[X] WezTerm/Nushell/... -- not found` | 脚本检测到依赖缺失 | 正常情况下继续确认即可，脚本会自动安装缺失依赖 |
+| `Nushell -- not found` | Nushell 未安装 | 正常情况下继续确认即可，脚本会从官方 GitHub release 安装到 `~/.local/bin` |
+| `Starship -- not found` | Starship 未安装 | 正常情况下继续确认即可，脚本会用官方预编译安装脚本安装到 `~/.local/bin` |
+| `Yazi -- not found` | Yazi 未安装 | 正常情况下继续确认即可，脚本会从官方 GitHub release 安装到 `~/.local/bin` |
+| `Node.js/npm -- not found` | Node.js 或 npm 未安装 | 正常情况下继续确认即可，脚本会安装最新版 Node.js LTS 到 `~/.local/bin` |
+| `Homebrew not found` | 系统没有 Homebrew | 正常情况下脚本会调用官方安装脚本，期间可能要求输入 macOS 密码；也可先手动安装 Homebrew 后重试 |
+| `Dependency installation did not complete` | 某个依赖安装失败 | 查看上方具体失败项，修复后重新运行 `./install.sh` |
+| `ya command not found` | Yazi 不可用，插件未恢复 | 重新运行 `./install.sh`；若只想手动恢复插件，运行 `YAZI_CONFIG_HOME="$HOME/.config/yazi" ya pkg install` |
+| `Config files installed; required software is still missing` | 使用了 `--skip-deps` 只复制配置 | 重新运行 `./install.sh` 完成依赖安装和验证 |
+
+macOS 默认安装脚本会：
+1. 检测并安装缺失依赖
 2. 用系统路径替换配置模板中的占位符
-3. 将配置文件部署到正确位置
-4. 安装 `package.toml` 中锁定的 Yazi 插件
-5. 备份已有配置
+3. 备份已有配置
+4. 将配置文件部署到正确位置
+5. 从上游预编译发布包安装 Nushell、Starship、Yazi 和 Node.js 到 `~/.local/bin`
+6. 根据 `package.toml` 恢复 Yazi 插件
 
 ## 📁 项目结构
 
@@ -100,7 +128,7 @@ ccNovaTerm 包含一个 [Claude Code 技能](https://docs.anthropic.com/en/docs/
 
 | 占位符 | 替换为 |
 |--------|--------|
-| `__NU_PATH__` | Nushell 可执行文件完整路径（Windows）或 `'nu'`（macOS） |
+| `__NU_PATH__` | Nushell 可执行文件完整路径 |
 | `__GIT_USR_BIN__` | Git 安装目录下的 `usr/bin` 路径 |
 
 ## 🛠️ 自定义
