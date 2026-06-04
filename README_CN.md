@@ -92,13 +92,12 @@ ccNovaTerm/
 │   ├── config.nu     ← Nushell 配置（别名、Yazi 集成）
 │   ├── env.nu        ← Nushell 环境变量
 │   ├── starship.toml ← Starship 提示符（Pastel Powerline）
-│   ├── yazi/         ← Yazi 配置与插件锁定文件
-│   └── CLAUDE.local.md ← 项目级 Claude Code 指令
+│   └── yazi/         ← Yazi 配置与插件锁定文件
 ├── docs/             ← 截图
 ├── test/             ← 测试脚本
 ├── install.ps1       ← Windows 安装脚本
 ├── install.sh        ← macOS 安装脚本
-└── CLAUDE.local.md   ← 本文件
+└── CLAUDE.local.md   ← 给 Claude Code 或其他编程助手参考的维护指南
 ```
 
 ## 🔄 config-sync 技能
@@ -130,6 +129,7 @@ ccNovaTerm 包含一个 [Claude Code 技能](https://docs.anthropic.com/en/docs/
 |--------|--------|
 | `__NU_PATH__` | Nushell 可执行文件完整路径 |
 | `__GIT_USR_BIN__` | Git 安装目录下的 `usr/bin` 路径 |
+| `__LOCAL_BIN__` | 用户级二进制目录，例如 macOS 上的 `~/.local/bin` |
 
 ## 🛠️ 自定义
 

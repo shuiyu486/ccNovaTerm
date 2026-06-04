@@ -6,16 +6,17 @@
 .
 ├── config/           ← 配置模板（config-sync 管理）
 │   ├── .wezterm.lua, config.nu, env.nu, starship.toml
-│   ├── yazi/         ← yazi.toml, keymap.toml, package.toml
-│   └── CLAUDE.local.md
+│   └── yazi/         ← yazi.toml, keymap.toml, package.toml
 ├── docs/             ← 截图 + 参考文档
-├── test/             ← test-install.ps1
+├── test/             ← test-install.ps1, test-install.sh
 ├── install.ps1       ← Windows 安装脚本
 ├── install.sh        ← macOS 安装脚本
-└── CLAUDE.local.md   ← 本地项目指令（受 config-sync 管理）
+└── CLAUDE.local.md   ← 维护指南（不作为 config 模板安装）
 ```
 
 本项目是 **ccNovaTerm** 和 **config-sync 技能** 的开发和维护工作目录。
+
+根目录 `CLAUDE.local.md` 是公开维护指南，用于帮助用户或编程助手理解本项目如何迭代；它不再放在 `config/` 下，也不作为终端配置同步到用户环境。
 
 ## 修改配置后
 
@@ -52,8 +53,10 @@ config-sync 技能源码位于 `~/.claude/plugins/marketplaces/terr-marketplace/
 
 ## 测试安装脚本
 
-- `test/test-install.ps1` 验证本地配置是否正确
-- 安装脚本通过占位符替换生成：`__NU_PATH__`、`__GIT_USR_BIN__`
+- `test/test-install.ps1` 验证 Windows 安装脚本
+- `test/test-install.sh` 验证 macOS 安装脚本
+- 安装脚本通过占位符替换生成：`__NU_PATH__`、`__GIT_USR_BIN__`、`__LOCAL_BIN__`
+- macOS 默认安装策略使用上游预编译发布包和 `~/.local/bin`，避免 Homebrew 在旧系统上编译 LLVM/Rust
 
 ## config-sync 的使用
 

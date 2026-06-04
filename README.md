@@ -92,13 +92,12 @@ ccNovaTerm/
 │   ├── config.nu     ← Nushell config (aliases, Yazi integration)
 │   ├── env.nu        ← Nushell environment variables
 │   ├── starship.toml ← Starship prompt (Pastel Powerline)
-│   ├── yazi/         ← Yazi config and plugin lockfile
-│   └── CLAUDE.local.md ← Project-level Claude Code instructions
+│   └── yazi/         ← Yazi config and plugin lockfile
 ├── docs/             ← Screenshots
 ├── test/             ← Test scripts
 ├── install.ps1       ← Windows installer
 ├── install.sh        ← macOS installer
-└── CLAUDE.local.md   ← This file
+└── CLAUDE.local.md   ← Maintenance guide for Claude Code or other coding assistants
 ```
 
 ## 🔄 config-sync Skill
@@ -130,6 +129,7 @@ Templates use placeholders that are auto-replaced with actual system paths durin
 |-------------|--------------|
 | `__NU_PATH__` | Full path to Nushell executable |
 | `__GIT_USR_BIN__` | `usr/bin` path under Git install directory |
+| `__LOCAL_BIN__` | User-level binary directory, such as `~/.local/bin` on macOS |
 
 ## 🛠️ Customization
 
