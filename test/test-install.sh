@@ -216,7 +216,11 @@ test_skip_deps_force_copies_configs() {
   grep -Fq "def --wrapped claude-env" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
   grep -Fq -- "--env-script" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
   grep -Fq "CLAUDE_ENV_SCRIPT" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
-  grep -Fq "def --wrapped claude-dpv4" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
+  ! grep -Fq "claude-dpv4" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
+  ! grep -Fq "CLAUDE_DPV4_ENV_SCRIPT" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
+  ! grep -Fq "CC_DPV4_QUIET" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
+  grep -Fq "try {" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
+  grep -Fq "catch {|err|" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
   grep -Fq ".local/bin" "$home_dir/Library/Application Support/nushell/env.nu" || return 1
   [ -f "$home_dir/.config/yazi/package.toml" ] || return 1
 }

@@ -156,7 +156,6 @@ If neither `--env-script` nor `CLAUDE_ENV_SCRIPT` is set, `claude-env` defaults 
 
 `claude-env` reads your main settings, keeps plugins, marketplaces, permissions, statusLine, and other fields, and only overlays the model/API-related environment variables from the script into a temporary settings file for this launch. The script must set `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, and `ANTHROPIC_MODEL` so the launcher never falls back to the default token from your main settings. Do not commit real tokens to the repository. If your script prints status output, guard it with `CLAUDE_ENV_QUIET` so the launcher can read it silently.
 
-For backward compatibility, `claude-dpv4` still exists and reads `~/.claude/set-cc-dpv4-env.nu` or `CLAUDE_DPV4_ENV_SCRIPT`, but new configs should use `claude-env`.
 
 ## 📁 Project Structure
 

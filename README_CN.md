@@ -156,7 +156,6 @@ claude-env
 
 `claude-env` 会读取主配置，保留其中的插件、marketplace、权限、statusLine 等内容，只把脚本中的模型/API 相关环境变量覆盖到本次启动生成的临时 settings 文件里。脚本必须设置 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和 `ANTHROPIC_MODEL`，避免误用主配置里的默认 token。不要把真实 token 提交到仓库。如果脚本会打印状态信息，请用 `CLAUDE_ENV_QUIET` 做静默判断，方便 launcher 静默读取。
 
-为兼容旧配置，`claude-dpv4` 仍然保留，并继续读取 `~/.claude/set-cc-dpv4-env.nu` 或 `CLAUDE_DPV4_ENV_SCRIPT`；新配置建议使用 `claude-env`。
 
 ## 📁 项目结构
 

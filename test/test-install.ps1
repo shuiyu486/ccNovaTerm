@@ -251,7 +251,11 @@ TestCase "Config files have valid syntax" {
         if ($c -notmatch "def --wrapped claude-env") { throw "config.nu missing claude-env function" }
         if ($c -notmatch "--env-script") { throw "config.nu missing script flag support" }
         if ($c -notmatch "CLAUDE_ENV_SCRIPT") { throw "config.nu missing generic script override support" }
-        if ($c -notmatch "def --wrapped claude-dpv4") { throw "config.nu missing legacy claude-dpv4 function" }
+        if ($c -match "claude-dpv4") { throw "config.nu should not include legacy claude-dpv4 support" }
+        if ($c -match "CLAUDE_DPV4_ENV_SCRIPT") { throw "config.nu should not include legacy CLAUDE_DPV4_ENV_SCRIPT support" }
+        if ($c -match "CC_DPV4_QUIET") { throw "config.nu should not include legacy CC_DPV4_QUIET support" }
+        if ($c -notmatch "try \{") { throw "config.nu missing try cleanup guard" }
+        if ($c -notmatch "catch \{\|err\|") { throw "config.nu missing catch cleanup guard" }
         if ($c -notmatch "def.*env.*y") { throw "config.nu missing yazi function" }
 
         # Yazi config: check preview shortcut and package lock

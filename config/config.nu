@@ -13,14 +13,11 @@ def --wrapped claude-env [
   let main_settings = ('~/.claude/settings.json' | path expand)
   let script_from_flag = ($env_script | default null)
   let script_from_env = ($env.CLAUDE_ENV_SCRIPT? | default null)
-  let script_from_legacy_env = ($env.CLAUDE_DPV4_ENV_SCRIPT? | default null)
   let launcher_env_script = ((
     if $script_from_flag != null {
       $script_from_flag
     } else if $script_from_env != null {
       $script_from_env
-    } else if $script_from_legacy_env != null {
-      $script_from_legacy_env
     } else {
       '~/.claude/claude-env.nu'
     }
@@ -34,7 +31,7 @@ def --wrapped claude-env [
   let base_env = ($main.env? | default {})
   let script_literal = ($launcher_env_script | to nuon)
   let capture_cmd = (
-    'with-env { CLAUDE_ENV_QUIET: "true", CC_DPV4_QUIET: "true" } { hide-env --ignore-errors ANTHROPIC_BASE_URL ANTHROPIC_AUTH_TOKEN ANTHROPIC_MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL ANTHROPIC_DEFAULT_SONNET_MODEL ANTHROPIC_DEFAULT_OPUS_MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME ANTHROPIC_DEFAULT_SONNET_MODEL_NAME ANTHROPIC_DEFAULT_OPUS_MODEL_NAME; source-env '
+    'with-env { CLAUDE_ENV_QUIET: "true" } { hide-env --ignore-errors ANTHROPIC_BASE_URL ANTHROPIC_AUTH_TOKEN ANTHROPIC_MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL ANTHROPIC_DEFAULT_SONNET_MODEL ANTHROPIC_DEFAULT_OPUS_MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME ANTHROPIC_DEFAULT_SONNET_MODEL_NAME ANTHROPIC_DEFAULT_OPUS_MODEL_NAME; source-env '
     + $script_literal
     + '; { ANTHROPIC_BASE_URL: ($env.ANTHROPIC_BASE_URL? | default null), ANTHROPIC_AUTH_TOKEN: ($env.ANTHROPIC_AUTH_TOKEN? | default null), ANTHROPIC_MODEL: ($env.ANTHROPIC_MODEL? | default null), ANTHROPIC_DEFAULT_HAIKU_MODEL: ($env.ANTHROPIC_DEFAULT_HAIKU_MODEL? | default null), ANTHROPIC_DEFAULT_SONNET_MODEL: ($env.ANTHROPIC_DEFAULT_SONNET_MODEL? | default null), ANTHROPIC_DEFAULT_OPUS_MODEL: ($env.ANTHROPIC_DEFAULT_OPUS_MODEL? | default null), ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME: ($env.ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME? | default null), ANTHROPIC_DEFAULT_SONNET_MODEL_NAME: ($env.ANTHROPIC_DEFAULT_SONNET_MODEL_NAME? | default null), ANTHROPIC_DEFAULT_OPUS_MODEL_NAME: ($env.ANTHROPIC_DEFAULT_OPUS_MODEL_NAME? | default null) } | transpose key value | where value != null | transpose -r -d | to json -r }'
   )
@@ -68,15 +65,14 @@ def --wrapped claude-env [
   }
 
   let generated_settings = (mktemp -t claude-env-settings.XXXXXX.json)
-  $patched | save -f $generated_settings
-  ^claude --settings $generated_settings ...$args
-  rm -f $generated_settings
-}
-
-# claude-dpv4: 兼容旧命令名；新配置请优先使用 claude-env。
-def --wrapped claude-dpv4 [...args: string] {
-  let legacy_env_script = (($env.CLAUDE_DPV4_ENV_SCRIPT? | default '~/.claude/set-cc-dpv4-env.nu') | path expand)
-  claude-env --env-script $legacy_env_script ...$args
+  try {
+    $patched | save -f $generated_settings
+    ^claude --settings $generated_settings ...$args
+    rm -f $generated_settings
+  } catch {|err|
+    rm -f $generated_settings
+    error make $err
+  }
 }
 
 # Yazi wrapper - cd on exit

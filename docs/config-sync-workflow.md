@@ -24,7 +24,7 @@
 2. 说"同步到项目"推送（临时 clone → 写入 → git commit → git push → 清理）
 3. 确认推送成功后，本地项目如有文档/技能变更，git commit + push
 
-`config.nu` 中的 `claude-env` 是通用启动 wrapper；个人 API endpoint、token 和模型只放在用户本机 env 脚本里，并通过 `claude-env --env-script <path>` 或 `CLAUDE_ENV_SCRIPT` 指定，不应通过 config-sync 同步到项目模板。`claude-dpv4` 仅为兼容旧命令名保留。
+`config.nu` 中的 `claude-env` 是通用启动 wrapper；个人 API endpoint、token 和模型只放在用户本机 env 脚本里，并通过 `claude-env --env-script <path>` 或 `CLAUDE_ENV_SCRIPT` 指定，不应通过 config-sync 同步到项目模板。
 
 ## 修改 config-sync 技能后
 
