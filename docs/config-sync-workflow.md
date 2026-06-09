@@ -24,6 +24,8 @@
 2. 说"同步到项目"推送（临时 clone → 写入 → git commit → git push → 清理）
 3. 确认推送成功后，本地项目如有文档/技能变更，git commit + push
 
+`config.nu` 中的 `claude-dpv4` 是通用启动 wrapper；个人 API endpoint、token 和模型只放在用户本机 `~/.claude/set-cc-dpv4-env.nu` 或 `CLAUDE_DPV4_ENV_SCRIPT` 指向的脚本里，不应通过 config-sync 同步到项目模板。
+
 ## 修改 config-sync 技能后
 
 config-sync 技能源码位于 `~/.claude/plugins/marketplaces/terr-marketplace/plugins/config-sync/`（同时是 terr-marketplace 的 git 仓库）。修改流程：

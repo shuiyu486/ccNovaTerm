@@ -15,6 +15,7 @@
 - 🎨 **Catppuccin Mocha** — WezTerm、Starship 全局统一主题
 - 🔤 **Nerd Font** — JetBrainsMono Nerd Font 开箱即用
 - 🐚 **Nushell** — 现代化结构化 Shell，内置 `cc` 别名直达 Claude Code
+- 🧩 **Claude Code 启动命令** — `claude-dpv4` 可在保留全局默认配置的同时临时切换 API/模型
 - 📁 **Yazi** — 终端文件管理器，无缝集成
 - 🔄 **config-sync** — Claude Code 技能，双向同步终端配置
 
@@ -116,13 +117,43 @@ macOS 默认安装脚本会：
 | `Enter` | 最大化 / 还原预览面板 |
 | `l` 或 `→` | 进入目录或打开文件；因为 `Enter` 已改为切换预览面板 |
 
+## 🧩 Claude Code 多配置启动
+
+默认命令保持不变，继续使用 `~/.claude/settings.json` 中的全局配置：
+
+```nu
+claude
+# 或
+cc
+```
+
+如果想在某个 WezTerm 窗口或分屏里临时使用另一套 API/模型，可以创建本机私有脚本：
+
+```nu
+# ~/.claude/set-cc-dpv4-env.nu
+$env.ANTHROPIC_BASE_URL = "https://your-provider.example/anthropic"
+$env.ANTHROPIC_AUTH_TOKEN = $env.YOUR_PROVIDER_API_KEY
+$env.ANTHROPIC_MODEL = "your-model"
+$env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "your-fast-model"
+$env.ANTHROPIC_DEFAULT_SONNET_MODEL = "your-model"
+$env.ANTHROPIC_DEFAULT_OPUS_MODEL = "your-model"
+```
+
+然后启动特殊会话：
+
+```nu
+claude-dpv4
+```
+
+`claude-dpv4` 会读取主配置，保留其中的插件、marketplace、权限、statusLine 等内容，只把脚本中的模型/API 相关环境变量覆盖到本次启动生成的临时 settings 文件里。脚本必须设置 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和 `ANTHROPIC_MODEL`，避免误用主配置里的默认 token。不要把真实 token 提交到仓库；如需使用其它脚本路径，可设置 `CLAUDE_DPV4_ENV_SCRIPT`。
+
 ## 📁 项目结构
 
 ```
 ccNovaTerm/
 ├── config/           ← 配置模板
 │   ├── .wezterm.lua  ← WezTerm 配置（Catppuccin Mocha 主题）
-│   ├── config.nu     ← Nushell 配置（别名、Yazi 集成）
+│   ├── config.nu     ← Nushell 配置（别名、Claude Code 启动命令、Yazi 集成）
 │   ├── env.nu        ← Nushell 环境变量
 │   ├── starship.toml ← Starship 提示符（Pastel Powerline）
 │   └── yazi/         ← Yazi 配置与插件锁定文件

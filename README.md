@@ -15,6 +15,7 @@ An automated setup that bundles [WezTerm](https://wezfurlong.org/wezterm/) + [Nu
 - 🎨 **Catppuccin Mocha** — Unified theme across WezTerm and Starship
 - 🔤 **Nerd Font** — JetBrainsMono Nerd Font, ready to use
 - 🐚 **Nushell** — Modern structured shell, with `cc` alias for instant Claude Code access
+- 🧩 **Claude Code launchers** — `claude-dpv4` can temporarily switch API/model while keeping global defaults intact
 - 📁 **Yazi** — Terminal file manager, seamlessly integrated
 - 🔄 **config-sync** — Claude Code skill for bidirectional config sync
 
@@ -116,13 +117,43 @@ Mouse shortcuts:
 | `Enter` | Maximize or restore the preview pane |
 | `l` or `→` | Enter directories or open files; use this because `Enter` toggles the preview pane |
 
+## 🧩 Claude Code multi-config launcher
+
+The default commands are unchanged and continue to use your global `~/.claude/settings.json`:
+
+```nu
+claude
+# or
+cc
+```
+
+To temporarily use another API/model in a specific WezTerm window or pane, create a private local script:
+
+```nu
+# ~/.claude/set-cc-dpv4-env.nu
+$env.ANTHROPIC_BASE_URL = "https://your-provider.example/anthropic"
+$env.ANTHROPIC_AUTH_TOKEN = $env.YOUR_PROVIDER_API_KEY
+$env.ANTHROPIC_MODEL = "your-model"
+$env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "your-fast-model"
+$env.ANTHROPIC_DEFAULT_SONNET_MODEL = "your-model"
+$env.ANTHROPIC_DEFAULT_OPUS_MODEL = "your-model"
+```
+
+Then start the alternate session:
+
+```nu
+claude-dpv4
+```
+
+`claude-dpv4` reads your main settings, keeps plugins, marketplaces, permissions, statusLine, and other fields, and only overlays the model/API-related environment variables from the script into a temporary settings file for this launch. The script must set `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, and `ANTHROPIC_MODEL` so the launcher never falls back to the default token from your main settings. Do not commit real tokens to the repository; set `CLAUDE_DPV4_ENV_SCRIPT` if you want to use another script path.
+
 ## 📁 Project Structure
 
 ```
 ccNovaTerm/
 ├── config/           ← Config templates
 │   ├── .wezterm.lua  ← WezTerm config (Catppuccin Mocha theme)
-│   ├── config.nu     ← Nushell config (aliases, Yazi integration)
+│   ├── config.nu     ← Nushell config (aliases, Claude Code launchers, Yazi integration)
 │   ├── env.nu        ← Nushell environment variables
 │   ├── starship.toml ← Starship prompt (Pastel Powerline)
 │   └── yazi/         ← Yazi config and plugin lockfile

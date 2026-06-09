@@ -213,6 +213,8 @@ test_skip_deps_force_copies_configs() {
   assert_contains "$output" "Config files installed; required software is still missing" || return 1
   [ -f "$home_dir/.config/wezterm/wezterm.lua" ] || return 1
   [ -f "$home_dir/Library/Application Support/nushell/config.nu" ] || return 1
+  grep -Fq "def --wrapped claude-dpv4" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
+  grep -Fq "CLAUDE_DPV4_ENV_SCRIPT" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
   grep -Fq ".local/bin" "$home_dir/Library/Application Support/nushell/env.nu" || return 1
   [ -f "$home_dir/.config/yazi/package.toml" ] || return 1
 }
