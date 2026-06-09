@@ -83,6 +83,39 @@ The default macOS installer will:
 5. Install Nushell, Starship, Yazi, and Node.js into `~/.local/bin` from prebuilt upstream releases
 6. Restore Yazi plugins from `package.toml`
 
+## ⌨️ Custom Shortcuts
+
+These shortcuts are enabled after installing the bundled WezTerm and Yazi configs.
+
+### WezTerm
+
+| Shortcut | Action |
+|----------|--------|
+| `Alt+C` / `Alt+V` | Copy / paste with the system clipboard |
+| `Ctrl+Shift+T` / `Ctrl+Shift+W` | New tab / close current tab |
+| `Alt+1` … `Alt+9` | Switch to tab 1–9 |
+| `Alt+D` / `Alt+Shift+D` | Split the current pane right / down |
+| `Alt+←/→/↑/↓` | Move focus between panes |
+| `Alt+X` | Close the current pane, with confirmation |
+| `Alt+H` | Hide the WezTerm window |
+| `Shift+Enter` | Pass Shift+Enter through to TUI apps, useful for multi-line input in Claude Code |
+| `Ctrl+Q` | Clear the current Claude Code input, including multi-line drafts |
+| `Ctrl+Z` | Restore/yank the last cleared Claude Code input |
+
+Mouse shortcuts:
+
+| Action | Behavior |
+|--------|----------|
+| Left click / selection | Open links, or copy completed selections to the clipboard |
+| Right click | Paste when nothing is selected; copy and clear when text is selected |
+
+### Yazi
+
+| Shortcut | Action |
+|----------|--------|
+| `Enter` | Maximize or restore the preview pane |
+| `l` or `→` | Enter directories or open files; use this because `Enter` toggles the preview pane |
+
 ## 📁 Project Structure
 
 ```
