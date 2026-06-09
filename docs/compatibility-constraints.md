@@ -17,7 +17,8 @@
 
 ## config.nu → `~/AppData/Roaming/nushell/config.nu`
 
-- 直接拷贝，无占位符。包含 `alias cc = claude` 和 Yazi wrapper
+- 直接拷贝，无占位符。包含 `alias cc = claude`、`claude-dpv4` 启动命令和 Yazi wrapper
+- `claude-dpv4` 只提供通用 wrapper；真实 API endpoint、token 和模型写在用户本机的 `~/.claude/set-cc-dpv4-env.nu` 或 `CLAUDE_DPV4_ENV_SCRIPT` 指向的脚本中，不提交到模板；脚本必须设置 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和 `ANTHROPIC_MODEL`
 - 修改后记得同步到模板
 
 ## starship.toml → `~/.config/starship.toml`

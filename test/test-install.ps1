@@ -246,8 +246,10 @@ TestCase "Config files have valid syntax" {
         if ($e -notmatch "STARSHIP_SHELL") { throw "env.nu missing STARShip_SHELL" }
         if ($e -notmatch "YAZI_FILE_ONE") { throw "env.nu missing YAZI_FILE_ONE" }
 
-        # Nushell config: check y function
+        # Nushell config: check Claude launchers and y function
         $c = Get-Content (Join-Path $fakeHome "AppData\Roaming\nushell\config.nu") -Raw -Encoding UTF8
+        if ($c -notmatch "def --wrapped claude-dpv4") { throw "config.nu missing claude-dpv4 function" }
+        if ($c -notmatch "CLAUDE_DPV4_ENV_SCRIPT") { throw "config.nu missing DPV4 script override support" }
         if ($c -notmatch "def.*env.*y") { throw "config.nu missing yazi function" }
 
         # Yazi config: check preview shortcut and package lock
