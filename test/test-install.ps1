@@ -248,8 +248,10 @@ TestCase "Config files have valid syntax" {
 
         # Nushell config: check Claude launchers and y function
         $c = Get-Content (Join-Path $fakeHome "AppData\Roaming\nushell\config.nu") -Raw -Encoding UTF8
-        if ($c -notmatch "def --wrapped claude-dpv4") { throw "config.nu missing claude-dpv4 function" }
-        if ($c -notmatch "CLAUDE_DPV4_ENV_SCRIPT") { throw "config.nu missing DPV4 script override support" }
+        if ($c -notmatch "def --wrapped claude-env") { throw "config.nu missing claude-env function" }
+        if ($c -notmatch "--env-script") { throw "config.nu missing script flag support" }
+        if ($c -notmatch "CLAUDE_ENV_SCRIPT") { throw "config.nu missing generic script override support" }
+        if ($c -notmatch "def --wrapped claude-dpv4") { throw "config.nu missing legacy claude-dpv4 function" }
         if ($c -notmatch "def.*env.*y") { throw "config.nu missing yazi function" }
 
         # Yazi config: check preview shortcut and package lock

@@ -38,7 +38,7 @@ macOS 使用 `install.sh`。
 - `.wezterm.lua` 使用 `__NU_PATH__` 占位符；安装器会替换为检测到的 Nushell 可执行文件路径。
 - `env.nu` 使用 `__GIT_USR_BIN__` 和 `__LOCAL_BIN__` 占位符；安装器会替换为对应平台路径。
 - 模板里的代理或 API key 示例必须保持禁用状态。用户安装后可在本机按需启用。
-- `config.nu` 中的 `claude-dpv4` 只提供通用启动 wrapper；真实 API endpoint、token 和模型应放在用户本机 `~/.claude/set-cc-dpv4-env.nu` 或 `CLAUDE_DPV4_ENV_SCRIPT` 指向的脚本里，不提交到仓库。
+- `config.nu` 中的 `claude-env` 只提供通用启动 wrapper；真实 API endpoint、token 和模型应放在用户本机 env 脚本里，并通过 `claude-env --env-script <path>` 或 `CLAUDE_ENV_SCRIPT` 指定，不提交到仓库。`claude-dpv4` 仅作为旧命令名兼容入口保留。
 - Yazi 插件依赖应记录在 `config/yazi/package.toml`。macOS 安装器会用 `ya pkg install --discard` 恢复插件。
 - `install.sh` 不应要求 `sudo`；它只安装用户级文件，不能写入 root 的 home 目录。
 - `install.sh --skip-deps` 应只复制配置、不下载依赖；默认路径应保持一键安装体验。

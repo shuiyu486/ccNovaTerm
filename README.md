@@ -15,7 +15,7 @@ An automated setup that bundles [WezTerm](https://wezfurlong.org/wezterm/) + [Nu
 - 🎨 **Catppuccin Mocha** — Unified theme across WezTerm and Starship
 - 🔤 **Nerd Font** — JetBrainsMono Nerd Font, ready to use
 - 🐚 **Nushell** — Modern structured shell, with `cc` alias for instant Claude Code access
-- 🧩 **Claude Code launchers** — `claude-dpv4` can temporarily switch API/model while keeping global defaults intact
+- 🧩 **Claude Code launchers** — `claude-env` can temporarily switch API/model with any local env script while keeping global defaults intact
 - 📁 **Yazi** — Terminal file manager, seamlessly integrated
 - 🔄 **config-sync** — Claude Code skill for bidirectional config sync
 
@@ -127,10 +127,10 @@ claude
 cc
 ```
 
-To temporarily use another API/model in a specific WezTerm window or pane, create a private local script:
+To temporarily use another API/model in a specific WezTerm window or pane, create any private local Nushell env script. The filename is yours to choose:
 
 ```nu
-# ~/.claude/set-cc-dpv4-env.nu
+# Example: ~/.claude/claude-openrouter-env.nu
 $env.ANTHROPIC_BASE_URL = "https://your-provider.example/anthropic"
 $env.ANTHROPIC_AUTH_TOKEN = $env.YOUR_PROVIDER_API_KEY
 $env.ANTHROPIC_MODEL = "your-model"
@@ -139,13 +139,24 @@ $env.ANTHROPIC_DEFAULT_SONNET_MODEL = "your-model"
 $env.ANTHROPIC_DEFAULT_OPUS_MODEL = "your-model"
 ```
 
-Then start the alternate session:
+Then start the alternate session with an explicit script path:
 
 ```nu
-claude-dpv4
+claude-env --env-script ~/.claude/claude-openrouter-env.nu
 ```
 
-`claude-dpv4` reads your main settings, keeps plugins, marketplaces, permissions, statusLine, and other fields, and only overlays the model/API-related environment variables from the script into a temporary settings file for this launch. The script must set `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, and `ANTHROPIC_MODEL` so the launcher never falls back to the default token from your main settings. Do not commit real tokens to the repository; set `CLAUDE_DPV4_ENV_SCRIPT` if you want to use another script path.
+Or set the script once for the current Nushell window/pane and launch with the generic command:
+
+```nu
+$env.CLAUDE_ENV_SCRIPT = '~/.claude/claude-openrouter-env.nu'
+claude-env
+```
+
+If neither `--env-script` nor `CLAUDE_ENV_SCRIPT` is set, `claude-env` defaults to `~/.claude/claude-env.nu`.
+
+`claude-env` reads your main settings, keeps plugins, marketplaces, permissions, statusLine, and other fields, and only overlays the model/API-related environment variables from the script into a temporary settings file for this launch. The script must set `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, and `ANTHROPIC_MODEL` so the launcher never falls back to the default token from your main settings. Do not commit real tokens to the repository. If your script prints status output, guard it with `CLAUDE_ENV_QUIET` so the launcher can read it silently.
+
+For backward compatibility, `claude-dpv4` still exists and reads `~/.claude/set-cc-dpv4-env.nu` or `CLAUDE_DPV4_ENV_SCRIPT`, but new configs should use `claude-env`.
 
 ## 📁 Project Structure
 

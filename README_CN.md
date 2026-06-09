@@ -15,7 +15,7 @@
 - 🎨 **Catppuccin Mocha** — WezTerm、Starship 全局统一主题
 - 🔤 **Nerd Font** — JetBrainsMono Nerd Font 开箱即用
 - 🐚 **Nushell** — 现代化结构化 Shell，内置 `cc` 别名直达 Claude Code
-- 🧩 **Claude Code 启动命令** — `claude-dpv4` 可在保留全局默认配置的同时临时切换 API/模型
+- 🧩 **Claude Code 启动命令** — `claude-env` 可通过任意本机 env 脚本临时切换 API/模型，同时保留全局默认配置
 - 📁 **Yazi** — 终端文件管理器，无缝集成
 - 🔄 **config-sync** — Claude Code 技能，双向同步终端配置
 
@@ -127,10 +127,10 @@ claude
 cc
 ```
 
-如果想在某个 WezTerm 窗口或分屏里临时使用另一套 API/模型，可以创建本机私有脚本：
+如果想在某个 WezTerm 窗口或分屏里临时使用另一套 API/模型，可以创建任意本机私有 Nushell env 脚本。文件名由你决定：
 
 ```nu
-# ~/.claude/set-cc-dpv4-env.nu
+# 示例：~/.claude/claude-openrouter-env.nu
 $env.ANTHROPIC_BASE_URL = "https://your-provider.example/anthropic"
 $env.ANTHROPIC_AUTH_TOKEN = $env.YOUR_PROVIDER_API_KEY
 $env.ANTHROPIC_MODEL = "your-model"
@@ -139,13 +139,24 @@ $env.ANTHROPIC_DEFAULT_SONNET_MODEL = "your-model"
 $env.ANTHROPIC_DEFAULT_OPUS_MODEL = "your-model"
 ```
 
-然后启动特殊会话：
+然后显式指定脚本路径启动特殊会话：
 
 ```nu
-claude-dpv4
+claude-env --env-script ~/.claude/claude-openrouter-env.nu
 ```
 
-`claude-dpv4` 会读取主配置，保留其中的插件、marketplace、权限、statusLine 等内容，只把脚本中的模型/API 相关环境变量覆盖到本次启动生成的临时 settings 文件里。脚本必须设置 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和 `ANTHROPIC_MODEL`，避免误用主配置里的默认 token。不要把真实 token 提交到仓库；如需使用其它脚本路径，可设置 `CLAUDE_DPV4_ENV_SCRIPT`。
+也可以在当前 Nushell 窗口或分屏中先设置脚本路径，再使用通用命令：
+
+```nu
+$env.CLAUDE_ENV_SCRIPT = '~/.claude/claude-openrouter-env.nu'
+claude-env
+```
+
+如果既没有传 `--env-script`，也没有设置 `CLAUDE_ENV_SCRIPT`，`claude-env` 默认读取 `~/.claude/claude-env.nu`。
+
+`claude-env` 会读取主配置，保留其中的插件、marketplace、权限、statusLine 等内容，只把脚本中的模型/API 相关环境变量覆盖到本次启动生成的临时 settings 文件里。脚本必须设置 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和 `ANTHROPIC_MODEL`，避免误用主配置里的默认 token。不要把真实 token 提交到仓库。如果脚本会打印状态信息，请用 `CLAUDE_ENV_QUIET` 做静默判断，方便 launcher 静默读取。
+
+为兼容旧配置，`claude-dpv4` 仍然保留，并继续读取 `~/.claude/set-cc-dpv4-env.nu` 或 `CLAUDE_DPV4_ENV_SCRIPT`；新配置建议使用 `claude-env`。
 
 ## 📁 项目结构
 
