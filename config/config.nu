@@ -58,10 +58,14 @@ def --wrapped claude-env [
   }
 
   let model = ($launcher_env.ANTHROPIC_MODEL? | default null)
+  let effective_env = ($launcher_env | merge {
+    CLAUDE_CODE_DISABLE_THINKING: "1"
+    CLAUDE_CODE_ALWAYS_ENABLE_EFFORT: "1"
+  })
   let patched = if $model == null {
-    $main | upsert env ($base_env | merge $launcher_env)
+    $main | upsert env ($base_env | merge $effective_env)
   } else {
-    $main | upsert model $model | upsert env ($base_env | merge $launcher_env)
+    $main | upsert model $model | upsert env ($base_env | merge $effective_env)
   }
 
   let generated_settings = (mktemp -t claude-env-settings.XXXXXX.json)

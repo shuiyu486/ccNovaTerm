@@ -154,7 +154,7 @@ claude-env
 
 If neither `--env-script` nor `CLAUDE_ENV_SCRIPT` is set, `claude-env` defaults to `~/.claude/claude-env.nu`.
 
-`claude-env` reads your main settings, keeps plugins, marketplaces, permissions, statusLine, and other fields, and only overlays the model/API-related environment variables from the script into a temporary settings file for this launch. The script must set `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, and `ANTHROPIC_MODEL` so the launcher never falls back to the default token from your main settings. Do not commit real tokens to the repository. If your script prints status output, guard it with `CLAUDE_ENV_QUIET` so the launcher can read it silently.
+`claude-env` reads your main settings, keeps plugins, marketplaces, permissions, statusLine, and other fields, and only overlays the model/API-related environment variables from the script into a temporary settings file for this launch. It also enables the compatibility flags `CLAUDE_CODE_DISABLE_THINKING=1` and `CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1` for the launched session. The script must set `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, and `ANTHROPIC_MODEL` so the launcher never falls back to the default token from your main settings. Do not commit real tokens to the repository. If your script prints status output, guard it with `CLAUDE_ENV_QUIET` so the launcher can read it silently.
 
 
 ## 📁 Project Structure

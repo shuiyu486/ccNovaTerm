@@ -251,6 +251,8 @@ TestCase "Config files have valid syntax" {
         if ($c -notmatch "def --wrapped claude-env") { throw "config.nu missing claude-env function" }
         if ($c -notmatch "--env-script") { throw "config.nu missing script flag support" }
         if ($c -notmatch "CLAUDE_ENV_SCRIPT") { throw "config.nu missing generic script override support" }
+        if ($c -notmatch "CLAUDE_CODE_DISABLE_THINKING") { throw "config.nu missing thinking compatibility flag" }
+        if ($c -notmatch "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT") { throw "config.nu missing effort compatibility flag" }
         if ($c -match "claude-dpv4") { throw "config.nu should not include legacy claude-dpv4 support" }
         if ($c -match "CLAUDE_DPV4_ENV_SCRIPT") { throw "config.nu should not include legacy CLAUDE_DPV4_ENV_SCRIPT support" }
         if ($c -match "CC_DPV4_QUIET") { throw "config.nu should not include legacy CC_DPV4_QUIET support" }

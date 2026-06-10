@@ -154,7 +154,7 @@ claude-env
 
 如果既没有传 `--env-script`，也没有设置 `CLAUDE_ENV_SCRIPT`，`claude-env` 默认读取 `~/.claude/claude-env.nu`。
 
-`claude-env` 会读取主配置，保留其中的插件、marketplace、权限、statusLine 等内容，只把脚本中的模型/API 相关环境变量覆盖到本次启动生成的临时 settings 文件里。脚本必须设置 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和 `ANTHROPIC_MODEL`，避免误用主配置里的默认 token。不要把真实 token 提交到仓库。如果脚本会打印状态信息，请用 `CLAUDE_ENV_QUIET` 做静默判断，方便 launcher 静默读取。
+`claude-env` 会读取主配置，保留其中的插件、marketplace、权限、statusLine 等内容，只把脚本中的模型/API 相关环境变量覆盖到本次启动生成的临时 settings 文件里；启动会话时还会启用兼容标记 `CLAUDE_CODE_DISABLE_THINKING=1` 和 `CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1`。脚本必须设置 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和 `ANTHROPIC_MODEL`，避免误用主配置里的默认 token。不要把真实 token 提交到仓库。如果脚本会打印状态信息，请用 `CLAUDE_ENV_QUIET` 做静默判断，方便 launcher 静默读取。
 
 
 ## 📁 项目结构

@@ -18,7 +18,7 @@
 ## config.nu → `~/AppData/Roaming/nushell/config.nu`
 
 - 直接拷贝，无占位符。包含 `alias cc = claude`、`claude-env` 通用启动命令和 Yazi wrapper
-- `claude-env` 只提供通用 wrapper；真实 API endpoint、token 和模型写在用户本机的 env 脚本中，不提交到模板；脚本路径可通过 `claude-env --env-script <path>` 或 `CLAUDE_ENV_SCRIPT` 指定，未指定时默认读取 `~/.claude/claude-env.nu`；脚本必须设置 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和 `ANTHROPIC_MODEL`
+- `claude-env` 只提供通用 wrapper；真实 API endpoint、token 和模型写在用户本机的 env 脚本中，不提交到模板；脚本路径可通过 `claude-env --env-script <path>` 或 `CLAUDE_ENV_SCRIPT` 指定，未指定时默认读取 `~/.claude/claude-env.nu`；脚本必须设置 `ANTHROPIC_BASE_URL`、`ANTHROPIC_AUTH_TOKEN` 和 `ANTHROPIC_MODEL`；启动会话时额外设置 `CLAUDE_CODE_DISABLE_THINKING=1` 和 `CLAUDE_CODE_ALWAYS_ENABLE_EFFORT=1` 做兼容修复
 - 修改后记得同步到模板
 
 ## starship.toml → `~/.config/starship.toml`
