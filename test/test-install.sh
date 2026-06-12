@@ -218,6 +218,8 @@ test_skip_deps_force_copies_configs() {
   grep -Fq "CLAUDE_ENV_SCRIPT" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
   grep -Fq "CLAUDE_CODE_DISABLE_THINKING" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
   grep -Fq "CLAUDE_CODE_ALWAYS_ENABLE_EFFORT" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
+  grep -Fq "reject NO_PROXY" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
+  grep -Fq "claude-env 使用环境脚本" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
   ! grep -Fq "claude-dpv4" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
   ! grep -Fq "CLAUDE_DPV4_ENV_SCRIPT" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
   ! grep -Fq "CC_DPV4_QUIET" "$home_dir/Library/Application Support/nushell/config.nu" || return 1
